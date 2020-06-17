@@ -1,5 +1,5 @@
 <?php
-// src/Controller/BlogController.php
+// src/Controller/ContactController.php
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -7,14 +7,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AboutRepository;
 
-class AboutController extends AbstractController
+class ContactController extends AbstractController
 {
     /**
-     * @Route("/about", name="about")
+     * @Route("/contact", name="contact")
      * 
      */
     public function index(AboutRepository $aboutRepository)
     {
-        return $this->render('about/layout.html.twig', ['about' =>$aboutRepository->findActive()]);
+        return $this->render('contact/layout.html.twig', []);
     }
 }
