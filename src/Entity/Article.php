@@ -47,6 +47,11 @@ class Article
      */
     private $category;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $status;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -115,13 +120,30 @@ class Article
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $metadata->addPropertyConstraint('title', new NotBlank());
-        $metadata->addPropertyConstraint('content', new NotBlank());
-
-        $metadata->addPropertyConstraint('articleDate', new NotBlank());
+        $metadata->addPropertyConstraint('title', new NotBlank([
+            'message' => 'Ce champ est requis',
+        ]));
+        $metadata->addPropertyConstraint('content', new NotBlank([
+            'message' => 'Ce champ est requis',
+        ]));
+        $metadata->addPropertyConstraint('articleDate', new NotBlank([
+            'message' => 'Ce champ est requis',
+        ]));
         $metadata->addPropertyConstraint(
             'articleDate',
             new Type(\DateTime::class)
         );
+    }
+
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
+
+        return $this;
     }
 }

@@ -31,7 +31,7 @@ class ArticleRepository extends ServiceEntityRepository
             ->orderBy('a.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
+            ->getResult() 
         ;
     }
     */
@@ -47,4 +47,17 @@ class ArticleRepository extends ServiceEntityRepository
         ;
     }
     */
+    public function findAllActive(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT a
+            FROM App\Entity\Article a
+            WHERE a.status like :etat'
+        )->setParameter('etat', true);
+
+        // returns an array of Product objects
+        return $query->getResult();
+    }   
 }

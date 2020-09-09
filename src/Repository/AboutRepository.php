@@ -19,11 +19,9 @@ class AboutRepository extends ServiceEntityRepository
         parent::__construct($registry, About::class);
     }
 
-    public function findActive(): ?About
+    public function get(): ?About
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.active = :val')
-            ->setParameter('val', true)
             ->getQuery()
             ->getOneOrNullResult()
         ;

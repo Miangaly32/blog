@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Author;
+use App\Entity\Category;
 use App\Form\ArticleType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,33 +34,28 @@ class BlogController extends AbstractController
      */
     public function list(ArticleRepository $articleRepository)
     {
-        return $this->render('admin/article/list.html.twig', ['articles'=>$articleRepository->findAll()]);
+        return $this->render('admin/article/list.html.twig', ['articles'=>$articleRepository->findAllActive()]);
     }
 
      /**
-     * @Route("/admin/article/add", name="add_article")
+     * @Route("/admin/article/form/{id}", name="form_article")
      * Ajout articles
      * 
      */
-    public function add(Request $request)
+    public function form(Request $request,ArticleRepository $articleRepository,$id = 0)
     {
         $article = new Article();
-        $article->setTitle('Nouvel article');
-        $article->setArticleDate(new \DateTime('now'));
+        $id != 0 ? $article = $articleRepository->find($id) : $article->setArticleDate(new \DateTime('now')) ;
 
         $form = $this->createForm(ArticleType::class, $article);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$article` variable has also been updated
             $article = $form->getData();
-
-            // ... perform some action, such as saving the task to the database
-            // for example, if Task is a Doctrine entity, save it!
-            // $entityManager = $this->getDoctrine()->getManager();
-            // $entityManager->persist($task);
-            // $entityManager->flush();
+            
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($article);
+            $entityManager->flush();
 
             return $this->redirectToRoute('list_article');
         }
@@ -66,5 +63,20 @@ class BlogController extends AbstractController
         return $this->render('admin/article/add.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/article/delete/{id}", name="delete_article")
+     * Liste des articles
+     * 
+     */
+    public function delete(ArticleRepository $articleRepository,$id)
+    {
+        $article = $articleRepository->find($id);
+        $article -> setStatus(false); 
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($article);
+        $entityManager->flush();
+        return $this->redirectToRoute('list_article');
     }
 }

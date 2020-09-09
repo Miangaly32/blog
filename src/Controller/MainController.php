@@ -14,6 +14,6 @@ class MainController extends AbstractController
      */
     public function homepage(ArticleRepository $articleRepository)
     {
-        return $this->render('base.html.twig', ['articles' => $articleRepository->findAll()]);
+        return $this->render('base.html.twig', ['articles' => $articleRepository->findAllActive()]);
     }
 }

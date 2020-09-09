@@ -15,6 +15,7 @@
             <tr>
                 <th>Titre</th>
                 <th>Auteur</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -23,17 +24,10 @@
                 <tr>
                     <td>{{ article.title }}</td>
                     <td>{{ article.author.name }}</td>
+                    <td> <a href="{{ path('form_article', {id: article.id}) }}" ><i class="fas fa-fw fa-edit"></i></a>  <a href="{{ path('delete_article', {id: article.id}) }}" ><i class="fas fa-trash" style="color:red"></i></a>
+                    </td>
                 <tr>
             {% endfor %}
-            
-            <tr>
-                <td>Tiger Nixon</td>
-                <td>Tiger Nixon</td>
-            </tr>
-            <tr>
-                <td>Garrett Winters</td>
-                <td>Garrett Winters</td>
-            </tr>
             
             </tbody>
         </table>
