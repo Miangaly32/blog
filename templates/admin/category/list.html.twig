@@ -1,0 +1,35 @@
+{% extends '/admin/base.html.twig' %}
+
+{% block content %}
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">   {% block contentTitle %} Liste des categories  {% endblock %}</h1>
+    </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+           
+             {% for category in categories %}
+                <tr>
+                    <td>{{ category.name }}</td>
+                    <td> <a href="{{ path('form_category', {id: category.id}) }}" ><i class="fas fa-fw fa-edit"></i></a>  <a href="{{ path('delete_category', {id: category.id}) }}" ><i class="fas fa-trash" style="color:red"></i></a>
+                    </td>
+                <tr>
+            {% endfor %}
+            
+            </tbody>
+        </table>
+        </div>
+    </div>
+    </div>
+{% endblock %}

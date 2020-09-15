@@ -44,13 +44,13 @@ class AboutController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // $article = $form->getData();
+            $about = $form->getData();
             
-            // $entityManager = $this->getDoctrine()->getManager();
-            // $entityManager->persist($article);
-            // $entityManager->flush();
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($about);
+            $entityManager->flush();
 
-            // return $this->redirectToRoute('list_article');
+            return $this->redirectToRoute('apercu_about');
         }
 
         return $this->render('admin/pages/about/form.html.twig', [

@@ -23,7 +23,11 @@ class ArticleType extends AbstractType
         $builder
             ->add('title', TextType::class, ['label'  => 'Titre'])
             ->add('articleDate', DateType::class, ['label'  => 'Date', 'format' => 'dd-MM-yyyy'])
-            ->add('category', EntityType::class, ['class' => Category::class, 'choice_label' => 'name'])
+            ->add('category', EntityType::class, ['class' => Category::class, 'choice_label' => 'name','query_builder' => function (CategoryRepository $er) {
+                return $er->createQueryBuilder('u')
+                    ->where('u.status = 1');
+            },
+            'data' => $options['data']->getCategory()])
             ->add('author', EntityType::class, ['class' => Author::class, 'choice_label' => 'name'])
             ->add('content', CKEditorType::class, ['label'  => 'Contenu'])
             ->add('save', SubmitType::class, ['label'  => 'Enregister'])

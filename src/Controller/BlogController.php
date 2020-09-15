@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class BlogController extends AbstractController
 {
@@ -39,13 +39,14 @@ class BlogController extends AbstractController
 
      /**
      * @Route("/admin/article/form/{id}", name="form_article")
-     * Ajout articles
+     * Ajout et modification articles
      * 
      */
     public function form(Request $request,ArticleRepository $articleRepository,$id = 0)
     {
         $article = new Article();
-        $id != 0 ? $article = $articleRepository->find($id) : $article->setArticleDate(new \DateTime('now')) ;
+        $titre = 'Modification';
+        $id != 0 ? $article = $articleRepository->find($id) : $titre='Ajout'; $article->setArticleDate(new \DateTime('now')) ; $article->setStatus(true);
 
         $form = $this->createForm(ArticleType::class, $article);
 
@@ -62,21 +63,24 @@ class BlogController extends AbstractController
 
         return $this->render('admin/article/add.html.twig', [
             'form' => $form->createView(),
+            'titre' => $titre
         ]);
     }
 
     /**
-     * @Route("/admin/article/delete/{id}", name="delete_article")
-     * Liste des articles
-     * 
+     * @Route("/admin/article/delete", name="delete_article")
+     * Suppression article
+     * @Method({"POST"})
      */
-    public function delete(ArticleRepository $articleRepository,$id)
+    public function delete(ArticleRepository $articleRepository,Request $request)
     {
-        $article = $articleRepository->find($id);
+        $data = json_decode($request->getContent());
+        return new JsonResponse(array('data' =>$data));
+      /*  $article = $articleRepository->find($id);
         $article -> setStatus(false); 
         $entityManager = $this->getDoctrine()->getManager();
         $entityManager->persist($article);
         $entityManager->flush();
-        return $this->redirectToRoute('list_article');
+        return 'okok';*/
     }
 }

@@ -47,4 +47,19 @@ class CategoryRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findAllActive(): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT a
+            FROM App\Entity\Category a
+            WHERE a.status like :etat'
+        )->setParameter('etat', true);
+
+        // returns an array of category objects
+        return $query->getResult();
+    }   
+
 }

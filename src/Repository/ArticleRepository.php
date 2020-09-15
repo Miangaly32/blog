@@ -57,7 +57,7 @@ class ArticleRepository extends ServiceEntityRepository
             WHERE a.status like :etat'
         )->setParameter('etat', true);
 
-        // returns an array of Product objects
+        // returns an array of article objects
         return $query->getResult();
     }   
 }
