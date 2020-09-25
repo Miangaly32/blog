@@ -1,0 +1,32 @@
+{% extends '/admin/base.html.twig' %}
+ {% block dashbordNav %}
+       <li class="nav-item">
+ {% endblock %}
+ {% block articleNav %}
+       <li class="nav-item">
+ {% endblock %}
+ {% block categoryNav %}
+       <li class="nav-item">
+ {% endblock %}
+ {% block authorNav %}
+       <li class="nav-item">
+ {% endblock %}
+  {% block pageNav %}
+       <li class="nav-item active">
+ {% endblock %}
+{% block content %}
+
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">   {% block contentTitle %} Page about  {% endblock %}</h1>
+    </div>
+
+    {{about.description | raw}}
+
+    <a href="{{ path('form_about', {id: about.id}) }}" class="btn btn-light btn-icon-split">
+        <span class="icon text-gray-600">
+            <i class="fas fa-edit"></i>
+        </span>
+        <span class="text">Modifier</span>
+    </a>
+{% endblock %}

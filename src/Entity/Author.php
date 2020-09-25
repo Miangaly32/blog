@@ -29,6 +29,11 @@ class Author
      */
     private $articles;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $status;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
@@ -78,6 +83,18 @@ class Author
                 $article->setAuthor(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStatus(): ?bool
+    {
+        return $this->status;
+    }
+
+    public function setStatus(bool $status): self
+    {
+        $this->status = $status;
 
         return $this;
     }
