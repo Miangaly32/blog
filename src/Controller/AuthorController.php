@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Author;
-use Symfony\Component\HttpFoundation\Response;
+
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AuthorRepository;
 use App\Form\AuthorType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class AuthorController extends AbstractController
@@ -21,7 +22,7 @@ class AuthorController extends AbstractController
      */
     public function list(AuthorRepository $authorRepository)
     {
-        return $this->render('admin/author/list.html.twig', ['authors'=>$authorRepository->findAll()]);
+        return $this->render('admin/author/list.html.twig', ['authors'=>$authorRepository->findAllActive()]);
     }
 
 
@@ -32,8 +33,8 @@ class AuthorController extends AbstractController
      */
     public function form(Request $request,AuthorRepository $authorRepository,$id = 0)
     {
-        
-        $id != 0 ? $author = $authorRepository->find($id) : $author = new Author();$author -> setStatus(true) ;
+        $titre = 'Modification';
+        $id != 0 ? $author = $authorRepository->findAllActive($id) : $titre = 'Ajout'; $author = new Author();$author -> setStatus(true) ;
         
         $form = $this->createForm(AuthorType::class,$author);
 
@@ -50,31 +51,26 @@ class AuthorController extends AbstractController
 
         return $this->render('admin/author/form.html.twig', [
             'form' => $form->createView(),
+            'titre' => $titre
         ]);
     }
     
-    // /**
-    //  * @Route("/admin/category/delete/{id}", name="delete_category")
-    //  * Suppression categorie
-    //  * 
-    //  */
-    // public function delete(CategoryRepository $categoryRepository,$id)
-    // {
-        
-    //     $category = $categoryRepository->find($id);
-    //     $articles = $category->getArticles();
+    /**
+     * @Route("/admin/author/delete/", name="delete_author")
+     * Suppression auteur
+     * 
+     */
+    public function delete(AuthorRepository $authorRepository,Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $article = $authorRepository->find($request->request->get('id'));
+            $article->setStatus(false);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($article);
+            $entityManager->flush();
+            return new JsonResponse(['res' => 1]);
+        }
 
-    //     $entityManager = $this->getDoctrine()->getManager();
-
-    //     foreach ($articles as $key => $article) {
-    //         $article -> setStatus(false);
-    //         $entityManager->persist($article); 
-    //     }
-
-    //     $category -> setStatus(false); 
-    
-    //     $entityManager->persist($category);
-    //     $entityManager->flush();
-    //     return $this->redirectToRoute('list_categories');
-    // }
+        return new JsonResponse(['res' => 0]);
+    }
 }

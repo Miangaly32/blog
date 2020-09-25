@@ -3,15 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use App\Entity\Author;
-use App\Entity\Category;
 use App\Form\ArticleType;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BlogController extends AbstractController
 {
@@ -20,9 +18,9 @@ class BlogController extends AbstractController
      * Page de detail d'une article
      * 
      */
-    public function detail(int $id,ArticleRepository $articleRepository)
+    public function detail(int $id, ArticleRepository $articleRepository)
     {
-        return $this->render('blog/layout.html.twig', ['article'=>$articleRepository->find($id)]);
+        return $this->render('blog/layout.html.twig', ['article' => $articleRepository->find($id)]);
     }
 
 
@@ -34,26 +32,28 @@ class BlogController extends AbstractController
      */
     public function list(ArticleRepository $articleRepository)
     {
-        return $this->render('admin/article/list.html.twig', ['articles'=>$articleRepository->findAllActive()]);
+        return $this->render('admin/article/list.html.twig', ['articles' => $articleRepository->findAllActive()]);
     }
 
-     /**
+    /**
      * @Route("/admin/article/form/{id}", name="form_article")
      * Ajout et modification articles
      * 
      */
-    public function form(Request $request,ArticleRepository $articleRepository,$id = 0)
+    public function form(Request $request, ArticleRepository $articleRepository, $id = 0)
     {
         $article = new Article();
         $titre = 'Modification';
-        $id != 0 ? $article = $articleRepository->find($id) : $titre='Ajout'; $article->setArticleDate(new \DateTime('now')) ; $article->setStatus(true);
+        $id != 0 ? $article = $articleRepository->find($id) : $titre = 'Ajout';
+        $article->setArticleDate(new \DateTime('now'));
+        $article->setStatus(true);
 
         $form = $this->createForm(ArticleType::class, $article);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $article = $form->getData();
-            
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($article);
             $entityManager->flush();
@@ -72,15 +72,17 @@ class BlogController extends AbstractController
      * Suppression article
      * @Method({"POST"})
      */
-    public function delete(ArticleRepository $articleRepository,Request $request)
+    public function delete(ArticleRepository $articleRepository, Request $request)
     {
-        $data = json_decode($request->getContent());
-        return new JsonResponse(array('data' =>$data));
-      /*  $article = $articleRepository->find($id);
-        $article -> setStatus(false); 
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($article);
-        $entityManager->flush();
-        return 'okok';*/
+        if ($request->isXmlHttpRequest()) {
+            $article = $articleRepository->find($request->request->get('id'));
+            $article->setStatus(false);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($article);
+            $entityManager->flush();
+            return new JsonResponse(['res' => 1]);
+        }
+
+        return new JsonResponse(['res' => 0]);
     }
 }
