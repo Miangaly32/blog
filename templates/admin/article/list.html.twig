@@ -36,7 +36,11 @@
                   <tr id="{{article.id}}">
                       <td>{{ article.title }}</td>
                       <td>{{ article.author.name }}</td>
-                      <td> <a href="{{ path('form_article', {id: article.id}) }}" ><i class="fas fa-fw fa-edit"></i></a>  <a style=" cursor: pointer" class="deleteLink" id-article="{{article.id}}" url="{{ path('delete_article') }}" ><i class="fas fa-trash" style="color:red"></i></a>
+                      <td> 
+                        <a href="{{ path('form_article', {id: article.id}) }}" ><i class="fas fa-fw fa-edit"></i></a> 
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <a style=" cursor: pointer" class="deleteLink" id-article="{{article.id}}" url="{{ path('delete_article') }}" ><i class="fas fa-trash" style="color:red"></i></a>
+                        {% endif %}
                       </td>
                   <tr>
               {% endfor %}

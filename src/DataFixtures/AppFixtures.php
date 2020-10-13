@@ -2,18 +2,36 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\About;
-use App\Entity\Article;
-use App\Entity\Author;
-use App\Entity\Category;
 use DateTime;
-use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Entity\About;
+use App\Entity\Author;
+use App\Entity\Article;
+use App\Entity\Category;
+use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
+    private $passwordEncoder;
+
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $this->passwordEncoder = $passwordEncoder;
+    }
+
     public function load(ObjectManager $manager)
     {
+
+        $user = new User();
+        $user->setEmail("test@gmail.com");
+        $user->setRoles(["ROLE_ADMIN"]);
+        $user->setPassword($this->passwordEncoder->encodePassword(
+            $user,
+            'mdp'
+        ));
+        $manager->persist($user);
 
         $author = new Author();
         $author->setName("Auteur ");
