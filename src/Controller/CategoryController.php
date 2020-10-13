@@ -34,7 +34,9 @@ class CategoryController extends AbstractController
     {
         
         $titre = 'Modification';
-        $id != 0 ? $category = $categoryRepository->find($id) :  $titre = 'Ajout'; $category = new Category();$category -> setStatus(true) ;
+        $category = new Category();
+        $category->setStatus(true);
+        $id != 0 ? $category = $categoryRepository->findOneBy(["status" => true, "id" => $id]) :  $titre = 'Ajout'; 
         
         $form = $this->createForm(CategoryType::class,$category);
 

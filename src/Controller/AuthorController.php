@@ -2,14 +2,17 @@
 // src/Controller/AuthorController.php
 namespace App\Controller;
 
-use App\Entity\Author;
+use Exception;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use App\Repository\AuthorRepository;
+use App\Entity\Author;
 use App\Form\AuthorType;
+use App\Repository\AuthorRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 class AuthorController extends AbstractController
@@ -31,20 +34,36 @@ class AuthorController extends AbstractController
      * Ajout et modification categorie
      * 
      */
-    public function form(Request $request,AuthorRepository $authorRepository,$id = 0)
+    public function form(Request $request, AuthorRepository $authorRepository, $id = 0, Security $security, UserPasswordEncoderInterface $passwordEncoder)
     {
         $titre = 'Modification';
-        $id != 0 ? $author = $authorRepository->findAllActive($id) : $titre = 'Ajout'; $author = new Author();$author -> setStatus(true) ;
+        $author = new Author();
+        $author->setStatus(true);
+
+        $id != 0 ? $author = $authorRepository->findOneBy(["id" => $id, "status" => true]) : $titre = 'Ajout';
         
         $form = $this->createForm(AuthorType::class,$author);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+           
             $author = $form->getData();
-            
+            $user = $author->getUser();
             $entityManager = $this->getDoctrine()->getManager();
+
+            if (!$user->getPassword()) {
+                $user->setRoles(array("ROLE_ADMIN"));
+                $user->setPassword($passwordEncoder->encodePassword(
+                    $user,
+                    'mdp'
+                ));
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }
+           
+            
             $entityManager->persist($author);
-            $entityManager->flush();
+                $entityManager->flush();
 
             return $this->redirectToRoute('list_authors');
         }

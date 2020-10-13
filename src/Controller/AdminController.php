@@ -24,13 +24,13 @@ class AdminController extends AbstractController
             ->getSingleScalarResult();
 
 
-        $nbCats = $authorRepository->createQueryBuilder('a')
+        $nbAuthors = $authorRepository->createQueryBuilder('a')
             ->select('count(a.id)')
             ->getQuery()
             ->getSingleScalarResult();
 
 
-        $nbAuthors = $categoryRepository->createQueryBuilder('c')
+        $nbCats = $categoryRepository->createQueryBuilder('c')
             ->select('count(c.id)')
             ->getQuery()
             ->getSingleScalarResult();

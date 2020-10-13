@@ -8,8 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
+use App\Repository\AuthorRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Security;
 
 class BlogController extends AbstractController
 {
@@ -40,11 +42,16 @@ class BlogController extends AbstractController
      * Ajout et modification articles
      * 
      */
-    public function form(Request $request, ArticleRepository $articleRepository, $id = 0)
+    public function form(Request $request, ArticleRepository $articleRepository, $id = 0, Security $security, AuthorRepository $authorRepository)
     {
         $article = new Article();
         $titre = 'Modification';
         $id != 0 ? $article = $articleRepository->find($id) : $titre = 'Ajout';
+
+        $author = $authorRepository->findOneBy(["user" => $security->getUser()]);
+
+        $article->setAuthor($author);
+
         $article->setArticleDate(new \DateTime('now'));
         $article->setStatus(true);
 

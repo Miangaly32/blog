@@ -8,17 +8,15 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Repository\AuthorRepository;
 
 class AuthorType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        
-        $builder
+        $builder  
             ->add('name', TextType::class, ['label'  => 'Nom de l\'auteur'])
-            ->add('save', SubmitType::class, ['label'  => 'Enregister'])
-        ;
+        ->add('user', UserType::class, ['label'  => 'Login de l\'auteur'])
+        ->add('save', SubmitType::class, ['label'  => 'Enregister']);
     }
 
     public function configureOptions(OptionsResolver $resolver)

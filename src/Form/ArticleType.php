@@ -26,9 +26,7 @@ class ArticleType extends AbstractType
             ->add('category', EntityType::class, ['class' => Category::class, 'choice_label' => 'name','query_builder' => function (CategoryRepository $er) {
                 return $er->createQueryBuilder('u')
                     ->where('u.status = 1');
-            },
-            'data' => $options['data']->getCategory()])
-            ->add('author', EntityType::class, ['class' => Author::class, 'choice_label' => 'name'])
+        }, 'data' => $options['data']->getCategory()])
             ->add('content', CKEditorType::class, ['label'  => 'Contenu'])
             ->add('save', SubmitType::class, ['label'  => 'Enregister'])
         ;
