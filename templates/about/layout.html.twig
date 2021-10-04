@@ -23,6 +23,6 @@
     <h1>About me</h1>
 
     {% block page_contents %}
-     {{about.description | raw}}
+     {{about.description|default('') | raw }}
      {% endblock %}
 {% endblock %}

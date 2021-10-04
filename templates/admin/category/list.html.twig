@@ -23,7 +23,7 @@
     <div class="card shadow mb-4">
     <div class="card-body">
         <div class="table-responsive">
-        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <table class="table table-bordered" id="dataTable" >
             <thead>
             <tr>
                 <th>Nom</th>
@@ -45,8 +45,8 @@
         </div>
     </div>
     </div>
-
-
+{% endblock %}
+    {% block modal %}
 <!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -69,12 +69,13 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
+    {% block documentReady %}
 
 <script>
     $(document).ready(function(){
-
-        $('.deleteLink').click(function (e) {
+        $('.deleteLink').click(function () {
             $('#url').val($(this).attr('url'));
             $('#id').val($(this).attr('id-category'));
             $('#modal').modal('show');
@@ -84,8 +85,13 @@
             e.preventDefault();
             let url = $('#url').val();
             let id = $('#id').val();
-            console.log(url+' '+id);
-            $.post(url,{id:id},function(data,status){
+
+            $(this).prop("disabled", true);
+            $(this).html(
+                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+            );
+
+            $.post(url,{id:id},function(data){
                 $('#modal').modal('toggle');
                 if(data.res===1){
                     $("#"+id).remove();
