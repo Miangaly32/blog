@@ -22,7 +22,7 @@
     <div class="card shadow mb-4">
       <div class="card-body">
           <div class="table-responsive">
-          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <table class="table table-bordered" id="dataTable">
               <thead>
               <tr>
                   <th>Titre</th>
@@ -35,8 +35,16 @@
               {% for article in articles %}
                   <tr id="{{article.id}}">
                       <td>{{ article.title }}</td>
-                      <td>{{ article.author.name }}</td>
-                      <td> <a href="{{ path('form_article', {id: article.id}) }}" ><i class="fas fa-fw fa-edit"></i></a>  <a style=" cursor: pointer" class="deleteLink" id-article="{{article.id}}" url="{{ path('delete_article') }}" ><i class="fas fa-trash" style="color:red"></i></a>
+                      <td>{{ article.author.user.name }}</td>
+                      <td>
+                          {% if (is_granted('ROLE_ADMIN') or article.author.user == app.user) %}
+                              <a href="{{ path('form_article', {id: article.id}) }}" >
+                                  <i class="fas fa-fw fa-edit"></i>
+                              </a>
+                              <a style=" cursor: pointer" id-article="{{article.id}}" class="deleteLink"  url="{{ path('delete_article') }}" >
+                                  <i class="fas fa-trash" style="color:red"></i>
+                              </a>
+                          {% endif %}
                       </td>
                   <tr>
               {% endfor %}
@@ -47,7 +55,7 @@
       </div>
     </div>
 {% endblock %}
-{% block modal %}
+    {% block modal %}
 <!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -65,36 +73,43 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-        <button type="button" id="deleteBtn" class="btn btn-danger">Supprimer</button>
+        <button type="button" id="deleteBtn" class="btn btn-danger">
+            Supprimer
+        </button>
       </div>
     </div>
   </div>
 </div>
-{% endblock %}
-{% block js %}
-<script>
-    $(document).ready(function(){
+    {% endblock %}
 
-        $('.deleteLink').click(function (e) {
-            $('#url').val($(this).attr('url'));
-            $('#id').val($(this).attr('id-article'));
-            $('#modal').modal('show');
-        });
+{% block documentReady %}
+    <script>
+        $(document).ready(function() {
+            $('.deleteLink').click(function () {
+                $('#url').val($(this).attr('url'));
+                $('#id').val($(this).attr('id-article'));
+                $('#modal').modal('show');
+            });
 
-        $('#deleteBtn').click(function (e) {
-            e.preventDefault();
-            let url = $('#url').val();
-            let id = $('#id').val();
-            console.log(url+' '+id);
-            $.post(url,{id:id},function(data,status){
-                $('#modal').modal('toggle');
-                if(data.res===1){
-                    $("#"+id).remove();
-                }else{
-                  alert("Une erreur est survenue");
-                }
+            $('#deleteBtn').click(function (e) {
+                e.preventDefault();
+                let url = $('#url').val();
+                let id = $('#id').val();
+
+                $(this).prop("disabled", true);
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+                );
+
+                $.post(url, {id: id}, function (data) {
+                    $('#modal').modal('toggle');
+                    if (data.res === 1) {
+                        $("#" + id).remove();
+                    } else {
+                        alert("Une erreur est survenue");
+                    }
+                });
             });
         });
-    });
-</script>
+    </script>
 {% endblock %}

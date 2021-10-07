@@ -22,5 +22,5 @@
     </header>
 {% endblock %}
 {% block content %}
-    {% block page_contents %}{{article.content}}{% endblock %}
+    {% block page_contents %}{{article.content|raw}}{% endblock %}
 {% endblock %}

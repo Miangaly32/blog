@@ -3,16 +3,25 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Author;
 use App\Form\ArticleType;
+use App\Repository\AuthorRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Security;
 
 class BlogController extends AbstractController
 {
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
+
     /**
      * @Route("/blog/{id}", name="blog_detail")
      * Page de detail d'une article
@@ -40,7 +49,7 @@ class BlogController extends AbstractController
      * Ajout et modification articles
      * 
      */
-    public function form(Request $request, ArticleRepository $articleRepository, $id = 0)
+    public function form(Request $request, ArticleRepository $articleRepository, $id = 0,AuthorRepository $authorRepository)
     {
         $article = new Article();
         $titre = 'Modification';
@@ -53,6 +62,9 @@ class BlogController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $article = $form->getData();
+            $user = $this->security->getUser();
+
+            $article->setAuthor($authorRepository->findOneBy(["user"=> $user]));
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($article);
@@ -70,7 +82,6 @@ class BlogController extends AbstractController
     /**
      * @Route("/admin/article/delete", name="delete_article")
      * Suppression article
-     * @Method({"POST"})
      */
     public function delete(ArticleRepository $articleRepository, Request $request)
     {

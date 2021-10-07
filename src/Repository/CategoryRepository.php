@@ -53,13 +53,23 @@ class CategoryRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager->createQuery(
-            'SELECT a
-            FROM App\Entity\Category a
-            WHERE a.status like :etat'
+            'SELECT c
+            FROM App\Entity\Category c
+            WHERE c.status like :etat'
         )->setParameter('etat', true);
 
         // returns an array of category objects
         return $query->getResult();
-    }   
+    }
 
+    public function countCategories(): int
+    {
+        return $this->createQueryBuilder('c')
+            ->select('count(c.status)')
+            ->andWhere('c.status = :etat')
+            ->setParameter('etat', true)
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
 }

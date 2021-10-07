@@ -59,5 +59,16 @@ class ArticleRepository extends ServiceEntityRepository
 
         // returns an array of article objects
         return $query->getResult();
-    }   
+    }
+
+    public function countArticles(): int
+    {
+        return $this->createQueryBuilder('a')
+            ->select('count(a.status)')
+            ->andWhere('a.status = :etat')
+            ->setParameter('etat', true)
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
 }
