@@ -25,6 +25,7 @@
             <thead>
             <tr>
                 <th>Nom</th>
+                <th>Email</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -32,8 +33,9 @@
            
              {% for author in authors %}
                 <tr id="{{author.id}}">
-                    <td>{{ author.name }}</td>
-                    <td> <a href="{{ path('form_author', {id: author.id}) }}" ><i class="fas fa-fw fa-edit"></i></a>  <a id-author="{{author.id}}" class="deleteLink" url="{{ path('delete_author') }}" style="cursor:pointer"  ><i class="fas fa-trash" style="color:red"></i></a>
+                    <td>{{ author.user.name }}</td>
+                    <td>{{ author.user.email }}</td>
+                    <td> <a id-author="{{author.id}}" class="deleteLink" url="{{ path('delete_author') }}" style="cursor:pointer"  ><i class="fas fa-trash" style="color:red"></i></a>
                     </td>
                 <tr>
             {% endfor %}
@@ -56,7 +58,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p> Voulez-vous vraiment supprimer? Les articles associees seront egalement supprimees</p>
+        <p> Voulez-vous vraiment supprimer? Les articles associées seront également supprimées</p>
         <input type="hidden" id="url" value='' />
         <input type="hidden" id="id" value='' />
       </div>

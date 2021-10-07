@@ -35,7 +35,15 @@
              {% for category in categories %}
                 <tr id="{{category.id}}">
                     <td>{{ category.name }}</td>
-                    <td> <a href="{{ path('form_category', {id: category.id}) }}" ><i class="fas fa-fw fa-edit"></i></a>  <a style="cursor:pointer" id-category="{{category.id}}" class="deleteLink" url="{{ path('delete_category') }}" ><i class="fas fa-trash" style="color:red"></i></a>
+                    <td>
+                        <a href="{{ path('form_category', {id: category.id}) }}" >
+                            <i class="fas fa-fw fa-edit"></i>
+                        </a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a style="cursor:pointer" id-category="{{category.id}}" class="deleteLink" url="{{ path('delete_category') }}" >
+                                <i class="fas fa-trash" style="color:red"></i>
+                            </a>
+                        {% endif %}
                     </td>
                 <tr>
             {% endfor %}

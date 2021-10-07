@@ -35,8 +35,16 @@
               {% for article in articles %}
                   <tr id="{{article.id}}">
                       <td>{{ article.title }}</td>
-                      <td>{{ article.author.name }}</td>
-                      <td> <a href="{{ path('form_article', {id: article.id}) }}" ><i class="fas fa-fw fa-edit"></i></a>  <a style=" cursor: pointer" id-article="{{article.id}}" class="deleteLink"  url="{{ path('delete_article') }}" ><i class="fas fa-trash" style="color:red"></i></a>
+                      <td>{{ article.author.user.name }}</td>
+                      <td>
+                          {% if (is_granted('ROLE_ADMIN') or article.author.user == app.user) %}
+                              <a href="{{ path('form_article', {id: article.id}) }}" >
+                                  <i class="fas fa-fw fa-edit"></i>
+                              </a>
+                              <a style=" cursor: pointer" id-article="{{article.id}}" class="deleteLink"  url="{{ path('delete_article') }}" >
+                                  <i class="fas fa-trash" style="color:red"></i>
+                              </a>
+                          {% endif %}
                       </td>
                   <tr>
               {% endfor %}

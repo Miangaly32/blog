@@ -20,11 +20,6 @@ class Author
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=25)
-     */
-    private $name;
-
-    /**
      * @ORM\OneToMany(targetEntity=Article::class, mappedBy="author", orphanRemoval=true)
      */
     private $articles;
@@ -34,6 +29,11 @@ class Author
      */
     private $status;
 
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     */
+    private $user;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
@@ -42,18 +42,6 @@ class Author
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     /**
@@ -95,6 +83,18 @@ class Author
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

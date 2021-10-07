@@ -6,6 +6,7 @@ use App\Entity\Author;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AuthorRepository;
 use App\Form\AuthorType;
@@ -31,7 +32,7 @@ class AuthorController extends AbstractController
      * Ajout et modification categorie
      * 
      */
-    public function form(Request $request,AuthorRepository $authorRepository,$id = 0)
+    public function form(Request $request,AuthorRepository $authorRepository,$id = 0, UserPasswordHasherInterface $passwordHasher)
     {
         $titre = 'Modification';
         $id != 0 ? $author = $authorRepository->findAllActive($id) : $titre = 'Ajout'; $author = new Author();$author -> setStatus(true) ;
@@ -41,7 +42,13 @@ class AuthorController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $author = $form->getData();
-            
+
+            $user = $author->getUser();
+            $user->setPassword($passwordHasher->hashPassword(
+                $user,
+                $user->getPassword()
+            ));
+
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($author);
             $entityManager->flush();

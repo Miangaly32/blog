@@ -28,7 +28,6 @@ class ArticleType extends AbstractType
                     ->where('u.status = 1');
             },
             'data' => $options['data']->getCategory()])
-            ->add('author', EntityType::class, ['class' => Author::class, 'choice_label' => 'name'])
             ->add('content', CKEditorType::class, ['label'  => 'Contenu'])
             ->add('save', SubmitType::class, ['label'  => 'Enregister'])
         ;

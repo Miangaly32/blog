@@ -4,7 +4,6 @@ namespace App\Controller;
 use App\Repository\ArticleRepository;
 use App\Repository\AuthorRepository;
 use App\Repository\CategoryRepository;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -22,5 +21,4 @@ class AdminController extends AbstractController
             'nbAuthors' => $authorRepository->countAuthors()
         ]);
     }
-
 }
