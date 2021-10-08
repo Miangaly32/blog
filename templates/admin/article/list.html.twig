@@ -26,6 +26,7 @@
               <thead>
               <tr>
                   <th>Titre</th>
+                  <th>Catégorie</th>
                   <th>Auteur</th>
                   <th>Actions</th>
               </tr>
@@ -35,6 +36,7 @@
               {% for article in articles %}
                   <tr id="{{article.id}}">
                       <td>{{ article.title }}</td>
+                      <td>{{ article.category.name }}</td>
                       <td>{{ article.author.user.name }}</td>
                       <td>
                           {% if (is_granted('ROLE_ADMIN') or article.author.user == app.user) %}

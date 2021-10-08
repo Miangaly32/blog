@@ -52,6 +52,11 @@ class Article
      */
     private $status;
 
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $extract;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -143,6 +148,18 @@ class Article
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getExtract(): ?string
+    {
+        return $this->extract;
+    }
+
+    public function setExtract(string $extract): self
+    {
+        $this->extract = $extract;
 
         return $this;
     }

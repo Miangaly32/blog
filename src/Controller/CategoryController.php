@@ -32,10 +32,12 @@ class CategoryController extends AbstractController
      */
     public function form(Request $request,CategoryRepository $categoryRepository,$id = 0)
     {
-        
+        $category = new Category();
+        $category -> setStatus(true) ;
         $titre = 'Modification';
-        $id != 0 ? $category = $categoryRepository->find($id) :  $titre = 'Ajout'; $category = new Category();$category -> setStatus(true) ;
-        
+
+        $id != 0 ? $category = $categoryRepository->find($id) :  $titre = 'Ajout';
+
         $form = $this->createForm(CategoryType::class,$category);
 
         $form->handleRequest($request);

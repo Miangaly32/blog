@@ -62,6 +62,12 @@ class AuthorRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    /**
+     * Count authors
+     * @return int
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function countAuthors(): int
     {
         return $this->createQueryBuilder('a')

@@ -29,6 +29,7 @@ class ArticleType extends AbstractType
             },
             'data' => $options['data']->getCategory()])
             ->add('content', CKEditorType::class, ['label'  => 'Contenu'])
+            ->add('extract', CKEditorType::class, ['label'  => 'Extrait'])
             ->add('save', SubmitType::class, ['label'  => 'Enregister'])
         ;
     }
