@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class BlogController extends AbstractController
 {
@@ -49,7 +50,7 @@ class BlogController extends AbstractController
      * Ajout et modification articles
      * 
      */
-    public function form(Request $request, ArticleRepository $articleRepository, $id = 0,AuthorRepository $authorRepository)
+    public function form(Request $request, ArticleRepository $articleRepository, $id = 0,AuthorRepository $authorRepository, SluggerInterface $slugger)
     {
         $article = new Article();
         $titre = 'Modification';
@@ -65,6 +66,27 @@ class BlogController extends AbstractController
             $user = $this->security->getUser();
 
             $article->setAuthor($authorRepository->findOneBy(["user"=> $user]));
+
+            /** @var UploadedFile $brochureFile */
+            $thumbnailFile = $form->get('thumbnailFile')->getData();
+
+            if ($thumbnailFile) {
+                $originalFilename = pathinfo($thumbnailFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid('', true).'.'.$thumbnailFile->guessExtension();
+
+                // Move the file to the directory where images are stored
+                try {
+                    $thumbnailFile->move('uploads',
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    // ... handle exception if something happens during file upload
+                }
+
+                $article->setThumbnail($newFilename);
+            }
 
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($article);

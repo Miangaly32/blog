@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -73,6 +74,17 @@ class Article
      * @Groups("article:read")
      */
     private $extract;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("article:read")
+     */
+    private $thumbnail;
+
+    /**
+     * @var File
+     */
+    private $thumbnailFile;
 
     public function getId(): ?int
     {
@@ -180,4 +192,33 @@ class Article
 
         return $this;
     }
+
+    public function getThumbnail(): ?string
+    {
+        return $this->thumbnail;
+    }
+
+    public function setThumbnail(string $thumbnail): self
+    {
+        $this->thumbnail = $thumbnail;
+
+        return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getThumbnailFile(): ?File
+    {
+        return $this->thumbnailFile;
+    }
+
+    /**
+     * @param File $thumbnailFile
+     */
+    public function setThumbnailFile(File $thumbnailFile): void
+    {
+        $this->thumbnailFile = $thumbnailFile;
+    }
+
 }
