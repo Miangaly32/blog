@@ -2,14 +2,24 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"},
+ *     normalizationContext={"groups"={"article:read"}}
+ * )
+ * @ApiFilter(BooleanFilter::class,properties={"status"})
  */
 class Article
 {
@@ -17,21 +27,25 @@ class Article
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"article:read","category:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"article:read","category:read"})
      */
     private $title;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups("article:read")
      */
     private $content;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups("article:read")
      */
     private $articleDate;
 
@@ -44,16 +58,19 @@ class Article
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("article:read")
      */
     private $category;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups("article:read")
      */
     private $status;
 
     /**
      * @ORM\Column(type="text")
+     * @Groups("article:read")
      */
     private $extract;
 
