@@ -9,21 +9,28 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AuthorRepository;
-use App\Form\AuthorType;
+use App\Form\Type\AuthorType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
 class AuthorController extends AbstractController
 {
+    private AuthorRepository $authorRepository;
+
+    public function __construct(AuthorRepository $authorRepository)
+    {
+        $this->authorRepository = $authorRepository;
+    }
+
     /* ADMIN */
     /**
      * @Route("/admin/author/list", name="list_authors")
      * Liste des auteurs
      * 
      */
-    public function list(AuthorRepository $authorRepository)
+    public function list()
     {
-        return $this->render('admin/author/list.html.twig', ['authors'=>$authorRepository->findAllActive()]);
+        return $this->render('admin/author/list.html.twig', ['authors'=>$this->authorRepository ->findBy(['status'=>true])]);
     }
 
 
@@ -32,10 +39,12 @@ class AuthorController extends AbstractController
      * Ajout et modification categorie
      * 
      */
-    public function form(Request $request,AuthorRepository $authorRepository,$id = 0, UserPasswordHasherInterface $passwordHasher)
+    public function form(Request $request,$id = 0, UserPasswordHasherInterface $passwordHasher)
     {
         $titre = 'Modification';
-        $id != 0 ? $author = $authorRepository->findAllActive($id) : $titre = 'Ajout'; $author = new Author();$author -> setStatus(true) ;
+        $author = new Author();
+        $author -> setStatus(true) ;
+        $id != 0 ? $author = $this->authorRepository->find($id) : $titre = 'Ajout';
         
         $form = $this->createForm(AuthorType::class,$author);
 
@@ -67,10 +76,10 @@ class AuthorController extends AbstractController
      * Suppression auteur
      * 
      */
-    public function delete(AuthorRepository $authorRepository,Request $request)
+    public function delete(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $article = $authorRepository->find($request->request->get('id'));
+            $article = $this->authorRepository->find($request->request->get('id'));
             $article->setStatus(false);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($article);
@@ -79,5 +88,20 @@ class AuthorController extends AbstractController
         }
 
         return new JsonResponse(['res' => 0]);
+    }
+
+    /**
+     * @Route("/admin/author/restore/{id}", name="restore_author")
+     * Restaurer auteur
+     */
+    public function restore(int $id)
+    {
+        $author = $this->authorRepository->find($id);
+        $author->setStatus(true);
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($author);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('list_authors');
     }
 }

@@ -1,0 +1,120 @@
+{% extends '/admin/base.html.twig' %}
+
+ {% block dashbordNav %}
+       <li class="nav-item">
+ {% endblock %}
+ {% block articleNav %}
+       <li class="nav-item active">
+ {% endblock %}
+ {% block authorNav %}
+       <li class="nav-item">
+ {% endblock %}
+ {% block categoryNav %}
+       <li class="nav-item">
+ {% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"> Liste des articles archivés</h1>
+    </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+      <div class="card-body">
+          <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable">
+              <thead>
+              <tr>
+                  <th>Titre</th>
+                  <th>Catégorie</th>
+                  <th>Auteur</th>
+                  <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+            
+              {% for article in articles %}
+                  <tr id="{{article.id}}">
+                      <td>{{ article.title }}</td>
+                      <td>{{ article.category.name }}</td>
+                      <td>{{ article.author.user.name }}</td>
+                      <td>
+                           <a href="{{ path('restore_article', {id: article.id}) }}" >
+                                  Restaurer
+                          </a>
+                      </td>
+                  <tr>
+              {% endfor %}
+              
+              </tbody>
+          </table>
+          </div>
+      </div>
+    </div>
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"> Liste des catégories archivés</h1>
+    </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for category in categories %}
+                    <tr id="{{category.id}}">
+                        <td>{{ category.name }}</td>
+                        <td>
+                            <a href="{{ path('restore_category', {id: category.id}) }}" >
+                                Restaurer
+                            </a>
+                        </td>
+                    <tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800"> Liste des auteurs archivés</h1>
+    </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for author in authors %}
+                    <tr id="{{author.id}}">
+                        <td>{{ author.user.name }}</td>
+                        <td>
+                            <a href="{{ path('restore_author', {id: author.id}) }}" >
+                                Restaurer
+                            </a>
+                        </td>
+                    <tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

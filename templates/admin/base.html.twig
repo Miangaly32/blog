@@ -111,6 +111,20 @@
       </li>
       {% endif %}
 
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      {% if is_granted('ROLE_ADMIN') %}
+        {% block archiveNav %}
+          <li class="nav-item">
+        {% endblock %}
+        <a class="nav-link collapsed" href="{{ path('list_archive') }}">
+          <i class="fas fa-fw fa-trash"></i>
+          <span>Archive</span>
+        </a>
+        </li>
+      {% endif %}
+
     </ul>
     <!-- End of Sidebar -->
 
