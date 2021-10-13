@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\Type\ArticleType;
 use App\Repository\AuthorRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,11 +19,13 @@ class BlogController extends AbstractController
 {
     private Security $security;
     private ArticleRepository $articleRepository;
+    private EntityManager $entityManager;
 
-    public function __construct(Security $security, ArticleRepository $articleRepository)
+    public function __construct(Security $security, ArticleRepository $articleRepository, EntityManagerInterface $entityManager)
     {
         $this->security = $security;
         $this->articleRepository = $articleRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -54,10 +58,12 @@ class BlogController extends AbstractController
     public function form(Request $request, $id = 0,AuthorRepository $authorRepository, SluggerInterface $slugger)
     {
         $article = new Article();
-        $titre = 'Modification';
-        $id != 0 ? $article = $this->articleRepository->find($id) : $titre = 'Ajout';
         $article->setArticleDate(new \DateTime('now'));
         $article->setStatus(true);
+
+        $titre = 'Modification';
+
+        $id != 0 ? $article = $this->articleRepository->find($id) : $titre = 'Ajout';
 
         $form = $this->createForm(ArticleType::class, $article);
 
@@ -83,15 +89,14 @@ class BlogController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // ... handle exception if something happens during file upload
+                    dump($e);
                 }
 
                 $article->setThumbnail($newFilename);
             }
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($article);
-            $entityManager->flush();
+            $this->entityManager->persist($article);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('list_article');
         }
@@ -111,9 +116,9 @@ class BlogController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $article = $this->articleRepository->find($request->request->get('id'));
             $article->setStatus(false);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($article);
-            $entityManager->flush();
+            $this->entityManager->persist($article);
+            $this->entityManager->flush();
+
             return new JsonResponse(['res' => 1]);
         }
 
@@ -128,9 +133,15 @@ class BlogController extends AbstractController
     {
         $article = $this->articleRepository->find($id);
         $article->setStatus(true);
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($article);
-        $entityManager->flush();
+        $category = $article->getCategory();
+        $category->setStatus(true);
+        $author = $article->getAuthor();
+        $author->setStatus(true);
+
+        $this->entityManager->persist($article);
+        $this->entityManager->persist($category);
+        $this->entityManager->persist($author);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('list_article');
     }

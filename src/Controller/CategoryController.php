@@ -28,7 +28,7 @@ class CategoryController extends AbstractController
      */
     public function list()
     {
-        return $this->render('admin/category/list.html.twig', ['categories'=>$this->categoryRepository->findAllActive()]);
+        return $this->render('admin/category/list.html.twig', ['categories'=>$this->categoryRepository->findBy(['status' => true])]);
     }
 
 

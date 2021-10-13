@@ -55,6 +55,7 @@ class Article
     /**
      * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="articles")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("article:read")
      */
     private $author;
 
@@ -78,7 +79,7 @@ class Article
     private $extract;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255,nullable=true)
      * @Groups("article:read")
      */
     private $thumbnail;
@@ -90,6 +91,7 @@ class Article
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="articles",cascade={"persist"})
+     * @Groups("article:read")
      */
     private $tags;
 

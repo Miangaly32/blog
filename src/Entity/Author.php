@@ -44,7 +44,7 @@ class Author
 
     /**
      * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
-     * @Groups("author:read","user:read","article:read")
+     * @Groups({"author:read","user:read","article:read"})
      */
     private $user;
 

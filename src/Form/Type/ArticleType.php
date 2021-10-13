@@ -24,7 +24,7 @@ class ArticleType extends AbstractType
         
         $builder
             ->add('title', TextType::class, ['label'  => 'Titre'])
-            ->add('thumbnailFile', FileType::class, ['label'  => 'Image de la vignette'])
+            ->add('thumbnailFile', FileType::class, ['label'  => 'Image de la vignette', 'required' => false])
             ->add('articleDate', DateType::class, ['label'  => 'Date', 'format' => 'dd-MM-yyyy'])
             ->add('category', EntityType::class, ['class' => Category::class, 'choice_label' => 'name','query_builder' => function (CategoryRepository $er) {
                 return $er->createQueryBuilder('u')
