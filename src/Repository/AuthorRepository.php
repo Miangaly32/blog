@@ -48,20 +48,12 @@ class AuthorRepository extends ServiceEntityRepository
     }
     */
 
-    public function findAllActive(): array
-    {
-        $entityManager = $this->getEntityManager();
-
-        $query = $entityManager->createQuery(
-            'SELECT a
-            FROM App\Entity\Author a
-            WHERE a.status like :etat'
-        )->setParameter('etat', true);
-
-        // returns an array of article objects
-        return $query->getResult();
-    }
-
+    /**
+     * Count authors
+     * @return int
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function countAuthors(): int
     {
         return $this->createQueryBuilder('a')

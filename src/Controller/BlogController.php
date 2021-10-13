@@ -3,23 +3,29 @@
 namespace App\Controller;
 
 use App\Entity\Article;
-use App\Entity\Author;
-use App\Form\ArticleType;
+use App\Form\Type\ArticleType;
 use App\Repository\AuthorRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class BlogController extends AbstractController
 {
-    private $security;
+    private Security $security;
+    private ArticleRepository $articleRepository;
+    private EntityManager $entityManager;
 
-    public function __construct(Security $security)
+    public function __construct(Security $security, ArticleRepository $articleRepository, EntityManagerInterface $entityManager)
     {
         $this->security = $security;
+        $this->articleRepository = $articleRepository;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -27,9 +33,9 @@ class BlogController extends AbstractController
      * Page de detail d'une article
      * 
      */
-    public function detail(int $id, ArticleRepository $articleRepository)
+    public function detail(int $id)
     {
-        return $this->render('blog/layout.html.twig', ['article' => $articleRepository->find($id)]);
+        return $this->render('blog/layout.html.twig', ['article' => $this->articleRepository->find($id)]);
     }
 
 
@@ -41,7 +47,7 @@ class BlogController extends AbstractController
      */
     public function list(ArticleRepository $articleRepository)
     {
-        return $this->render('admin/article/list.html.twig', ['articles' => $articleRepository->findAllActive()]);
+        return $this->render('admin/article/list.html.twig', ['articles' => $this->articleRepository->findBy(['status'=>true])]);
     }
 
     /**
@@ -49,13 +55,15 @@ class BlogController extends AbstractController
      * Ajout et modification articles
      * 
      */
-    public function form(Request $request, ArticleRepository $articleRepository, $id = 0,AuthorRepository $authorRepository)
+    public function form(Request $request, $id = 0,AuthorRepository $authorRepository, SluggerInterface $slugger)
     {
         $article = new Article();
-        $titre = 'Modification';
-        $id != 0 ? $article = $articleRepository->find($id) : $titre = 'Ajout';
         $article->setArticleDate(new \DateTime('now'));
         $article->setStatus(true);
+
+        $titre = 'Modification';
+
+        $id != 0 ? $article = $this->articleRepository->find($id) : $titre = 'Ajout';
 
         $form = $this->createForm(ArticleType::class, $article);
 
@@ -66,9 +74,29 @@ class BlogController extends AbstractController
 
             $article->setAuthor($authorRepository->findOneBy(["user"=> $user]));
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($article);
-            $entityManager->flush();
+            /** @var UploadedFile $brochureFile */
+            $thumbnailFile = $form->get('thumbnailFile')->getData();
+
+            if ($thumbnailFile) {
+                $originalFilename = pathinfo($thumbnailFile->getClientOriginalName(), PATHINFO_FILENAME);
+                // this is needed to safely include the file name as part of the URL
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid('', true).'.'.$thumbnailFile->guessExtension();
+
+                // Move the file to the directory where images are stored
+                try {
+                    $thumbnailFile->move('uploads',
+                        $newFilename
+                    );
+                } catch (FileException $e) {
+                    dump($e);
+                }
+
+                $article->setThumbnail($newFilename);
+            }
+
+            $this->entityManager->persist($article);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('list_article');
         }
@@ -83,17 +111,38 @@ class BlogController extends AbstractController
      * @Route("/admin/article/delete", name="delete_article")
      * Suppression article
      */
-    public function delete(ArticleRepository $articleRepository, Request $request)
+    public function delete(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $article = $articleRepository->find($request->request->get('id'));
+            $article = $this->articleRepository->find($request->request->get('id'));
             $article->setStatus(false);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($article);
-            $entityManager->flush();
+            $this->entityManager->persist($article);
+            $this->entityManager->flush();
+
             return new JsonResponse(['res' => 1]);
         }
 
         return new JsonResponse(['res' => 0]);
+    }
+
+    /**
+     * @Route("/admin/article/restore/{id}", name="restore_article")
+     * Restaurer article
+     */
+    public function restore(int $id)
+    {
+        $article = $this->articleRepository->find($id);
+        $article->setStatus(true);
+        $category = $article->getCategory();
+        $category->setStatus(true);
+        $author = $article->getAuthor();
+        $author->setStatus(true);
+
+        $this->entityManager->persist($article);
+        $this->entityManager->persist($category);
+        $this->entityManager->persist($author);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('list_article');
     }
 }

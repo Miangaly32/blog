@@ -84,7 +84,7 @@
         </a>
         <div id="collapseTwo2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestion des categories</h6>
+            <h6 class="collapse-header">Gestion des catégories</h6>
             <a class="collapse-item" href="{{ path('list_categories') }}">Liste</a>
             <a class="collapse-item" href="{{ path('form_category') }}">Ajouter</a>
           </div>
@@ -114,20 +114,16 @@
       <!-- Divider -->
       <hr class="sidebar-divider">
 
-      <!-- Nav Item - Pages Collapse Menu -->
-       {% block pageNav %}
-      <li class="nav-item">
-      {% endblock %}
-      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
-          <i class="fas fa-fw fa-cogs"></i>
-          <span>Parametre de page</span>
+      {% if is_granted('ROLE_ADMIN') %}
+        {% block archiveNav %}
+          <li class="nav-item">
+        {% endblock %}
+        <a class="nav-link collapsed" href="{{ path('list_archive') }}">
+          <i class="fas fa-fw fa-trash"></i>
+          <span>Archive</span>
         </a>
-        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="{{ path('apercu_about') }}">A propos</a>
-          </div>
-        </div>
-      </li>
+        </li>
+      {% endif %}
 
     </ul>
     <!-- End of Sidebar -->
@@ -263,7 +259,7 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Mon blog 2020</span>
+            <span>Copyright &copy; Mon blog 2021</span>
           </div>
         </div>
       </footer>
@@ -273,6 +269,9 @@
 
   </div>
   <!-- End of Page Wrapper -->
+
+  {% block modal %}
+  {% endblock%}
 
   <!-- Scroll to Top Button-->
   <a class="scroll-to-top rounded" href="#page-top">
