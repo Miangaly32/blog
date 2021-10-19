@@ -47,7 +47,7 @@ class Article
     private $content;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      * @Groups("article:read")
      */
     private $articleDate;

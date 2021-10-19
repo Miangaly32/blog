@@ -5,6 +5,7 @@ use App\Entity\Article;
 use App\Entity\Tag;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -25,8 +26,8 @@ class ArticleType extends AbstractType
         $builder
             ->add('title', TextType::class, ['label'  => 'Titre'])
             ->add('thumbnailFile', FileType::class, ['label'  => 'Image de la vignette', 'required' => false])
-            ->add('articleDate', DateType::class, ['label'  => 'Date', 'format' => 'dd-MM-yyyy'])
-            ->add('category', EntityType::class, ['class' => Category::class, 'choice_label' => 'name','query_builder' => function (CategoryRepository $er) {
+            ->add('articleDate', DateTimeType::class, ['label'  => 'Date','widget' => 'single_text'])
+            ->add('category', EntityType::class, ['label'  => 'Catégorie','class' => Category::class, 'choice_label' => 'name','query_builder' => function (CategoryRepository $er) {
                 return $er->createQueryBuilder('u')
                     ->where('u.status = 1');
             },
@@ -34,7 +35,7 @@ class ArticleType extends AbstractType
             ->add('content', CKEditorType::class, ['label'  => 'Contenu'])
             ->add('extract', CKEditorType::class, ['label'  => 'Extrait'])
             ->add('tags', TagType::class, ['label'  => 'Tags'])
-            ->add('save', SubmitType::class, ['label'  => 'Enregister'])
+            ->add('save', SubmitType::class, ['label'  => 'Enregistrer'])
         ;
     }
 

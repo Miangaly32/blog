@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\Type\ArticleType;
+use App\Form\Type\UserPasswordType;
 use App\Form\Type\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,24 +40,37 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route ("/profile",name="profile")
+     * @Route ("/admin/profile",name="profile")
      */
     public function profile(Request $request, UserPasswordHasherInterface $passwordHasher)
     {
+        $entityManager = $this->getDoctrine()->getManager();
+
         $user = $this->getUser();
+        $userRecup = clone $user;
         $form = $this->createForm(UserType::class, $user);
+        $form_password = $this->createForm(UserPasswordType::class, $userRecup);
 
         $form->handleRequest($request);
+        $form_password->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = $form->getData();
+        if ($form->getClickedButton() === $form->get('save') || $form->getClickedButton() === $form->get('save1') ){
+            if ($form->isSubmitted() && $form->isValid() ) {
+                $user = $form->getData();
+                $entityManager->persist($user);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('profile');
+            }
+        }
+        if ($form_password->isSubmitted() && $form_password->isValid() ) {
+            $userRecup = $form_password->getData();
 
             $user->setPassword($passwordHasher->hashPassword(
                 $user,
-                $user->getPassword()
+                $userRecup->getNew()
             ));
 
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -64,7 +78,8 @@ class SecurityController extends AbstractController
         }
 
         return $this->render('admin/security/profile.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'form_password' => $form_password->createView()
         ]);
     }
 }

@@ -1,5 +1,7 @@
 body{
     font-family: Roboto;
+    background-color: #F7F5F5;
+    color: #000000;
 }
 
 /* Sidebar */
@@ -56,4 +58,40 @@ body{
     font-size: 20px;
     line-height: 24px;
     letter-spacing: 0.15px;
+}
+
+.edit{
+    color: #0061AE;
+}
+
+.blue-button{
+    color: #0061AE;
+}
+
+.save-button{
+    background: #0061AE!important;
+    border-radius: 4px;
+    color: #FFFFFF;
+    text-align: center;
+    text-transform: capitalize;
+    font-size: 14px;
+}
+
+.add-button{
+    background: #0061AE!important;
+    border-radius: 4px;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.pointer{
+    cursor: pointer
+}
+
+.card-paragraph{
+    height: 75px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
