@@ -7,286 +7,405 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
-  <meta name="author" content="">
+  <title>Mon blog Admin</title>
 
-  <title>Mon blog - Admin</title>
+  <link rel="stylesheet" href="//fonts.googleapis.com/css2?family=Material+Icons+Outlined">
+  <!-- Font Awesome -->
+  <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css?v=1"
+          rel="stylesheet"
+  />
+  <!-- Google Fonts -->
+  <link
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+          rel="stylesheet"
+  />
+  <!-- MDB -->
+  <link
+          href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.css?v=1"
+          rel="stylesheet"
+  />
 
-  <!-- Custom fonts for this template-->
-  <link href="{{ asset('bo/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-{#<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>#}
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-
-  <!-- Custom styles for this template-->
-  <link href="{{ asset('bo/css/sb-admin-2.min.css') }}" rel="stylesheet">
-
+  <link href="{{ asset('css/admin.css?v=5') }}" rel="stylesheet" type="text/css">
 </head>
 
-<body id="page-top">
-  <!-- Page Wrapper -->
-  <div id="wrapper">
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+<body>
 
-      <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ path('admin') }}">
-        <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">Mon blog admin</div>
+<!--Main Navigation-->
+<header>
+  <!-- Sidebar -->
+  <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse">
+      <div class="list-group list-group-flush" style="margin-top:140px">
+        <a href="{{ path('admin') }}" class="list-group-item list-group-item-action py-3 ripple {{  app.request.get('_route') == 'admin' ? 'active '}}">
+          <div class="row mt-1">
+            <div class="col-3">
+              <i class="material-icons-outlined" >auto_awesome_mosaic</i>
+            </div>
+            <div class="col-9">
+              <span>Tableau de bord</span>
+            </div>
+          </div>
+        </a>
+        <a href="{{ path('list_article') }}" class="list-group-item list-group-item-action py-3 ripple {{  app.request.get('_route') == 'list_article' ? 'active '}}">
+          <div class="row mt-1">
+            <div class="col-3">
+              <i class="material-icons-outlined" >chrome_reader_mode</i>
+            </div>
+            <div class="col-9">
+              <span>Articles</span>
+            </div>
+          </div>
+        </a>
+        <a href="{{ path('list_categories') }}" class="list-group-item list-group-item-action py-3 ripple {{  app.request.get('_route') == 'list_categories' ? 'active '}}">
+          <div class="row mt-1">
+            <div class="col-3">
+              <i class="material-icons-outlined" >grid_view</i>
+            </div>
+            <div class="col-9">
+              <span>Catégories</span>
+            </div>
+          </div>
+        </a>
+        <a href="{{ path('list_authors') }}" class="list-group-item list-group-item-action py-3 ripple {{  app.request.get('_route') == 'list_authors' ? 'active '}}">
+          <div class="row mt-1">
+            <div class="col-3">
+              <i class="material-icons-outlined" >person_outline</i>
+            </div>
+            <div class="col-9">
+              <span>Auteurs</span>
+            </div>
+          </div>
+        </a>
+        <a href="{{ path('list_archives') }}" class="list-group-item list-group-item-action py-3 ripple {{  app.request.get('_route') == 'lsit_archives' ? 'active '}}">
+          <div class="row mt-1">
+            <div class="col-3">
+              <i class="material-icons-outlined" >archive</i>
+            </div>
+            <div class="col-9">
+              <span>Archives</span>
+            </div>
+          </div>
+        </a>
+      </div>
+  </nav>
+  <!-- Sidebar -->
+
+  <!-- Navbar -->
+  <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <!-- Container wrapper -->
+    <div class="container-fluid">
+      <!-- Toggle button -->
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
+              aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Brand -->
+      <a class="navbar-brand" href="{{ path('admin') }}">
+        <img src="{{ asset('img/logo1.png') }}" height="115" alt="" loading="lazy" />
       </a>
 
-      <!-- Divider -->
-      <hr class="sidebar-divider my-0">
-
-      {% block dashbordNav %}
-      <!-- Nav Item - Dashboard -->
-      <li class="nav-item active">
-       {% endblock %}
-        <a class="nav-link" href="{{ path('admin') }}">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Tableau de bord</span></a>
-      </li>
-     
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      <!-- Heading 
-      <div class="sidebar-heading">
-        Interface
-      </div>-->
-
-      <!-- Nav Item - Pages Collapse Menu -->
-        {% block articleNav %}
-      <li class="nav-item  ">
-        {% endblock %}
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-newspaper"></i>
-          <span>Articles</span>
-        </a>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestion des articles</h6>
-            <a class="collapse-item" href="{{ path('list_article') }}">Liste</a>
-            <a class="collapse-item" href="{{ path('form_article') }}">Ajouter</a>
-          </div>
-        </div>
-      </li>
-
-       {% block categoryNav %}
-      <li class="nav-item">
-      {% endblock %}
-
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-list-alt"></i>
-          <span>Categories</span>
-        </a>
-        <div id="collapseTwo2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestion des catégories</h6>
-            <a class="collapse-item" href="{{ path('list_categories') }}">Liste</a>
-            <a class="collapse-item" href="{{ path('form_category') }}">Ajouter</a>
-          </div>
-        </div>
-      </li>
-
-      {% if is_granted('ROLE_ADMIN') %}
-       {% block authorNav %}
-      <li class="nav-item">
-      {% endblock %}
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo3" aria-expanded="true" aria-controls="collapseTwo">
-          <i class="fas fa-fw fa-users"></i>
-          <span>Auteurs</span>
-        </a>
-        <div id="collapseTwo3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestion des auteurs</h6>
-            <a class="collapse-item" href="{{ path('list_authors') }}">Liste</a>
-
-            <a class="collapse-item" href="{{ path('form_author') }}">Ajouter</a>
-
-          </div>
-        </div>
-      </li>
-      {% endif %}
-
-      <!-- Divider -->
-      <hr class="sidebar-divider">
-
-      {% if is_granted('ROLE_ADMIN') %}
-        {% block archiveNav %}
-          <li class="nav-item">
-        {% endblock %}
-        <a class="nav-link collapsed" href="{{ path('list_archive') }}">
-          <i class="fas fa-fw fa-trash"></i>
-          <span>Archive</span>
-        </a>
-        </li>
-      {% endif %}
-
-    </ul>
-    <!-- End of Sidebar -->
-
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
-      <!-- Main Content -->
-      <div id="content">
-        <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-          <!-- Sidebar Toggle (Topbar) -->
-          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-            <i class="fa fa-bars"></i>
-          </button>
-
-          <!-- Topbar Navbar -->
-          <ul class="navbar-nav ml-auto">
-
-            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-            <li class="nav-item dropdown no-arrow d-sm-none">
-              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-search fa-fw"></i>
-              </a>
-              <!-- Dropdown - Messages -->
-              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                <form class="form-inline mr-auto w-100 navbar-search">
-                  <div class="input-group">
-                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                      <button class="btn btn-primary" type="button">
-                        <i class="fas fa-search fa-sm"></i>
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
+      <!-- Right links -->
+      <ul class="navbar-nav ms-auto d-flex flex-row">
+        <!-- Notification dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link me-3 me-lg-0 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink"
+             role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-bell" style="color:#0061AE"></i>
+            <span class="badge rounded-pill badge-notification bg-danger">1</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+            <li><a class="dropdown-item" href="#">Some news</a></li>
+            <li><a class="dropdown-item" href="#">Another news</a></li>
+            <li>
+              <a class="dropdown-item" href="#">Something else</a>
             </li>
-
-            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <!-- Nav Item - User Information -->
-            <li class="nav-item dropdown no-arrow">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ app.user.name }}</span>
-                <img alt="Photo de profil" class="img-profile rounded-circle" src="{{ asset('bo/img/profile.jpg')}}">
-              </a>
-              <!-- Dropdown - User Information -->
-              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="{{ path('profile') }}">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Profil
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{{ path('app_logout') }}">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                  Déconnexion
-                </a>
-              </div>
-            </li>
-            {% endif %}
           </ul>
+        </li>
 
-        </nav>
-        <!-- End of Topbar -->
-        <!-- Begin Page Content -->
-        <div class="container-fluid">
-            {% block content %}
-          <!-- Page Heading -->
-          <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-0 text-gray-800"> Tableau de bord</h1>
-          </div>
-
-          <!-- Content Row -->
-          <div class="row">
-
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Articles</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nbArticles }}</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-newspaper fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Catégories</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nbCategories }}</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-list-alt fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-             <div class="col-xl-3 col-md-6 mb-4">
-              <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                  <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Auteurs</div>
-                      <div class="h5 mb-0 font-weight-bold text-gray-800">{{ nbAuthors }}</div>
-                    </div>
-                    <div class="col-auto">
-                      <i class="fas fa-users fa-2x text-gray-300"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-          </div>
-{% endblock %}
-        </div>
-        <!-- /.container-fluid -->
-      
-      </div>
-      <!-- End of Main Content -->
-      <!-- Footer -->
-      <footer class="sticky-footer bg-white">
-        <div class="container my-auto">
-          <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Mon blog 2021</span>
-          </div>
-        </div>
-      </footer>
-      <!-- End of Footer -->
+        <!-- Avatar -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
+             id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+            <img src="{{ asset('img/profile.jpg')}}" class="rounded-circle" height="22"
+                 alt="" loading="lazy" />
+            <span style="margin-left: 10px;color: #000000;">{{ app.user.name }}</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+            <li>
+              <a class="dropdown-item" href="{{ path('profile') }}">
+                Profil
+                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400" style="margin-left: 50px"></i>
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="{{ path('app_logout') }}">
+                Déconnexion
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400" style="margin-left: 10px"></i>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
     </div>
-    <!-- End of Content Wrapper -->
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+</header>
+<!--Main Navigation-->
+<!--Breadcumbs-->
 
+<nav aria-label="breadcrumb" style="margin-top: 12%;margin-left: 17%">
+  {% block breadcumbs %}
+  {% endblock %}
+</nav>
+
+<!--Breadcumbs-->
+<!--Main layout-->
+<main style="margin-top: 2%;margin-left: 20%">
+  <div class="container">
+    {% block content %}
+      <div class="row">
+        <div class="col-md-6 col-sm-12 bg-white p-3 rounded">
+          <h6 class="title">Articles</h6>
+          <!-- Carousel wrapper -->
+          <div
+            id="carouselBasicExample"
+            class="carousel slide carousel-fade"
+            data-mdb-ride="carousel"
+          >
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+              <button
+                type="button"
+                data-mdb-target="#carouselBasicExample"
+                data-mdb-slide-to="0"
+                class="active"
+                aria-current="true"
+                aria-label="Slide 1"
+              ></button>
+              <button
+                type="button"
+                data-mdb-target="#carouselBasicExample"
+                data-mdb-slide-to="1"
+                aria-label="Slide 2"
+              ></button>
+              <button
+                type="button"
+                data-mdb-target="#carouselBasicExample"
+                data-mdb-slide-to="2"
+                aria-label="Slide 3"
+              ></button>
+            </div>
+
+            <!-- Inner -->
+            <div class="carousel-inner">
+              <!-- Single item -->
+              <div class="carousel-item active">
+                <img
+                  src="https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg"
+                  class="d-block w-100"
+                  alt="..."
+                />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>First slide label</h5>
+                  <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                </div>
+              </div>
+
+              <!-- Single item -->
+              <div class="carousel-item">
+                <img
+                  src="https://mdbootstrap.com/img/Photos/Slides/img%20(22).jpg"
+                  class="d-block w-100"
+                  alt="..."
+                />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Second slide label</h5>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                </div>
+              </div>
+
+              <!-- Single item -->
+              <div class="carousel-item">
+                <img
+                  src="https://mdbootstrap.com/img/Photos/Slides/img%20(23).jpg"
+                  class="d-block w-100"
+                  alt="..."
+                />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Third slide label</h5>
+                  <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+                </div>
+              </div>
+            </div>
+            <!-- Inner -->
+
+            <!-- Controls -->
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-mdb-target="#carouselBasicExample"
+              data-mdb-slide="prev"
+            >
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-mdb-target="#carouselBasicExample"
+              data-mdb-slide="next"
+            >
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+          <!-- Carousel wrapper -->
+          <p class="py-3 ms-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
+          <span class="open-button">OUVRIR</span>
+        </div>
+        <div class="col-md-5 col-sm-12 ms-3">
+          <div class="row bg-white p-3 rounded">
+            <h6 class="title">Catégories</h6>
+            <div class="ms-2">
+              <ul>
+                <li>lorem ipsum</li>
+                <li>lorem ipsum</li>
+                <li>lorem ipsum</li>
+              </ul>
+            </div>
+            <span class="open-button">OUVRIR</span>
+          </div>
+          <div class="row mt-5 bg-white p-3 rounded">
+            <h6 class="title">Auteurs</h6>
+            <div class="ms-2">
+              <ul>
+                <li>lorem ipsum</li>
+                <li>lorem ipsum</li>
+                <li>lorem ipsum</li>
+              </ul>
+            </div>
+            <span class="open-button">OUVRIR</span>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5 mb-4">
+        <div class="col-md-6 col-sm-12 bg-white p-3 rounded">
+          <h6 class="title">Archives</h6>
+          <!-- Carousel wrapper -->
+          <div
+              id="carouselBasicExample"
+              class="carousel slide carousel-fade"
+              data-mdb-ride="carousel"
+          >
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+              <button
+                      type="button"
+                      data-mdb-target="#carouselBasicExample"
+                      data-mdb-slide-to="0"
+                      class="active"
+                      aria-current="true"
+                      aria-label="Slide 1"
+              ></button>
+              <button
+                      type="button"
+                      data-mdb-target="#carouselBasicExample"
+                      data-mdb-slide-to="1"
+                      aria-label="Slide 2"
+              ></button>
+              <button
+                      type="button"
+                      data-mdb-target="#carouselBasicExample"
+                      data-mdb-slide-to="2"
+                      aria-label="Slide 3"
+              ></button>
+            </div>
+
+            <!-- Inner -->
+            <div class="carousel-inner">
+              <!-- Single item -->
+              <div class="carousel-item active">
+                <img
+                        src="https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg"
+                        class="d-block w-100"
+                        alt="..."
+                />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>First slide label</h5>
+                  <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                </div>
+              </div>
+
+              <!-- Single item -->
+              <div class="carousel-item">
+                <img
+                        src="https://mdbootstrap.com/img/Photos/Slides/img%20(22).jpg"
+                        class="d-block w-100"
+                        alt="..."
+                />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Second slide label</h5>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                </div>
+              </div>
+
+              <!-- Single item -->
+              <div class="carousel-item">
+                <img
+                        src="https://mdbootstrap.com/img/Photos/Slides/img%20(23).jpg"
+                        class="d-block w-100"
+                        alt="..."
+                />
+                <div class="carousel-caption d-none d-md-block">
+                  <h5>Third slide label</h5>
+                  <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+                </div>
+              </div>
+            </div>
+            <!-- Inner -->
+
+            <!-- Controls -->
+            <button
+                    class="carousel-control-prev"
+                    type="button"
+                    data-mdb-target="#carouselBasicExample"
+                    data-mdb-slide="prev"
+            >
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+                    class="carousel-control-next"
+                    type="button"
+                    data-mdb-target="#carouselBasicExample"
+                    data-mdb-slide="next"
+            >
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+          <!-- Carousel wrapper -->
+          <p class="py-3 ms-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
+          <span class="open-button">OUVRIR</span>
+        </div>
+      </div>
+    {% endblock%}
   </div>
-  <!-- End of Page Wrapper -->
+</main>
+
+
 
   {% block modal %}
   {% endblock%}
 
-  <!-- Scroll to Top Button-->
-  <a class="scroll-to-top rounded" href="#page-top">
-    <i class="fas fa-angle-up"></i>
-  </a>
-
-  <!-- Bootstrap core JavaScript-->
-  <script src="{{ asset('bo/vendor/jquery/jquery.min.js')}}"></script>
-  <script src="{{ asset('bo/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-
-  <!-- Core plugin JavaScript-->
-  <script src="{{ asset('bo/vendor/jquery-easing/jquery.easing.min.js')}}"></script>
-
-  <!-- Custom scripts for all pages-->
-  <script src="{{ asset('bo/js/sb-admin-2.min.js')}}"></script>
+  <!-- MDB -->
+  <script
+          type="text/javascript"
+          src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"
+  ></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
   {% block documentReady %}
 

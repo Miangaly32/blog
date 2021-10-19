@@ -34,7 +34,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/archive", name="list_archive")
+     * @Route("/admin/archive", name="list_archives")
      * Liste des articles archivés
      *
      */

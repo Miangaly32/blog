@@ -1,27 +1,65 @@
 {% extends '/admin/base.html.twig' %}
 
- {% block dashbordNav %}
-       <li class="nav-item">
- {% endblock %}
- {% block articleNav %}
-       <li class="nav-item active">
- {% endblock %}
- {% block authorNav %}
-       <li class="nav-item">
- {% endblock %}
- {% block categoryNav %}
-       <li class="nav-item">
- {% endblock %}
+{% block breadcumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('list_article') }}">Article</a></li>
+        <li class="breadcrumb-item active" aria-current="page"> {% block contentTitle %} {{titre}}   {% endblock %}</li>
+    </ol>
+{% endblock %}
 {% block content %}
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">   {% block contentTitle %} {{titre}} article  {% endblock %}</h1>
+    {{ form_start(form) }}
+    <div class="row mb-3">
+        <div class="col-6">
+            {{ form.title.vars.label }}
+            {{ form_widget(form.title,{'attr':{'class':'form-control-lg'}}) }}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-3">
+            {{ form.articleDate.vars.label }}
+            {{ form_widget(form.articleDate,{'attr':{'class':'form-control-lg'}}) }}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-2">
+            {{ form.category.vars.label }}
+            {{ form_widget(form.category,{'attr':{'class':'form-control-lg'}}) }}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-4">
+            {{ form.thumbnailFile.vars.label }}
+            {{ form_widget(form.thumbnailFile,{'attr':{'class':'form-control-lg'}}) }}
+        </div>
     </div>
 
-    <!-- Content Row -->
-    <div class="row">
-       {{ form(form) }}
+    <div class="row mb-3">
+        <div class="col-9">
+            {{ form.content.vars.label }}
+            {{ form_widget(form.content) }}
+        </div>
     </div>
+
+    <div class="row mb-3">
+        <div class="col-9">
+            {{ form.extract.vars.label }}
+           {{ form_widget(form.extract) }}
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-3">
+            {{ form.tags.vars.label }}
+            {{ form_widget(form.tags,{'attr':{'class':'form-control-lg','data-role':'tagsinput'}}) }}
+        </div>
+    </div>
+
+     <div class="row mb-3">
+        <div class="col-9">
+            {{ form_widget(form.save, { 'attr': {'class': 'btn btn-primary save-button float-end'} }) }}
+        </div>
+     </div>
+    {{ form_end(form) }}
 {% endblock %}
 {% block documentReady %}
     <script>

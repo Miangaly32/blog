@@ -1,29 +1,20 @@
 {% extends '/admin/base.html.twig' %}
- {% block dashbordNav %}
-       <li class="nav-item">
- {% endblock %}
- {% block articleNav %}
-       <li class="nav-item">
- {% endblock %}
- {% block categoryNav %}
-       <li class="nav-item">
- {% endblock %}
-  {% block authorNav %}
-       <li class="nav-item active">
- {% endblock %}
+
+{% block breadcumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('list_authors') }}">Auteur</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Liste</li>
+    </ol>
+{% endblock %}
+
 {% block content %}
 
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">   {% block contentTitle %} Liste des auteurs  {% endblock %}</h1>
-    </div>
-    <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-    <div class="card-body">
-        <div class="table-responsive">
-        <table class="table table-bordered" id="dataTable">
+    <div class="row ">
+        <div class="col-9 bg-white">
+            <table class="table table-striped table-sm">
             <thead>
             <tr>
+                <th>Classement</th>
                 <th>Nom</th>
                 <th>Email</th>
                 <th>Actions</th>
@@ -33,17 +24,33 @@
            
              {% for author in authors %}
                 <tr id="{{author.id}}">
+                    <td>{{ author.id }}</td>
                     <td>{{ author.user.name }}</td>
                     <td>{{ author.user.email }}</td>
-                    <td> <a id-author="{{author.id}}" class="deleteLink" url="{{ path('delete_author') }}" style="cursor:pointer"  ><i class="fas fa-trash" style="color:red"></i></a>
+                    <td>
+                        <a id-author="{{author.id}}" class="deleteLink" url="{{ path('delete_author') }}" style="cursor:pointer"  >
+                            <span class="material-icons-outlined edit" >delete_outline</span>
+                        </a>
                     </td>
-                <tr>
+                </tr>
             {% endfor %}
             
             </tbody>
         </table>
         </div>
     </div>
+
+    <div class="row mt-5">
+        <div class="col-6">
+            <h5 class="mb-3">Ajouter auteur</h5>
+            {{ form_start(form) }}
+            {{ form.user.name.vars.label }}
+            {{ form_widget(form.user.name, { 'attr': {'class': 'form-control-lg mb-3'} }) }}
+            {{ form.user.email.vars.label }}
+            {{ form_widget(form.user.email, { 'attr': {'class': 'form-control-lg mb-3'} }) }}
+            {{ form_widget(form.user.save, { 'attr': {'class': 'btn btn-primary save-button mb-5'} }) }}
+            {{ form_end(form) }}
+        </div>
     </div>
 {% endblock %}
     {% block modal %}

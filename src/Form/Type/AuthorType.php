@@ -15,7 +15,7 @@ class AuthorType extends AbstractType
     {
         
         $builder
-            ->add('user', UserType::class, ['label'  => 'Identifiants'])
+            ->add('user', UserAuthorType::class, ['label'  => false])
         ;
     }
 

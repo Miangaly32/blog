@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Validator as AppAssert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -39,8 +41,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
+     * @AppAssert\CheckPassword(
+     *   groups={"update"},
+     * )
      */
     private $password;
+
+    /**
+     * @var string The hashed password
+     */
+    private $new;
 
     /**
      * @ORM\Column(type="string", length=50)
@@ -148,4 +158,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getNew(): string
+    {
+        return $this->new;
+    }
+
+    /**
+     * @param string $new
+     */
+    public function setNew(string $new): void
+    {
+        $this->new = $new;
+    }
+
 }

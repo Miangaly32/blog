@@ -26,9 +26,28 @@ class CategoryController extends AbstractController
      * Liste des articles
      * 
      */
-    public function list()
+    public function list(Request $request)
     {
-        return $this->render('admin/category/list.html.twig', ['categories'=>$this->categoryRepository->findBy(['status' => true])]);
+        $category = new Category();
+        $category -> setStatus(true) ;
+
+        $form = $this->createForm(CategoryType::class,$category);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $category = $form->getData();
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($category);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('list_categories');
+        }
+
+        return $this->render('admin/category/list.html.twig', [
+            'categories'=>$this->categoryRepository->findBy(['status' => true]),
+            'form' => $form->createView()
+        ]);
     }
 
 

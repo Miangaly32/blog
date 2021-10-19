@@ -51,6 +51,16 @@ class BlogController extends AbstractController
     }
 
     /**
+     * @Route("/admin/article/detail/{id}", name="detail_article")
+     * Détail article
+     *
+     */
+    public function details(ArticleRepository $articleRepository,$id)
+    {
+        return $this->render('admin/article/detail.html.twig', ['article' => $this->articleRepository->find($id)]);
+    }
+
+    /**
      * @Route("/admin/article/form/{id}", name="form_article")
      * Ajout et modification articles
      * 

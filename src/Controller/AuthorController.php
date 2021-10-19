@@ -28,9 +28,33 @@ class AuthorController extends AbstractController
      * Liste des auteurs
      * 
      */
-    public function list()
+    public function list(Request $request, UserPasswordHasherInterface $passwordHasher)
     {
-        return $this->render('admin/author/list.html.twig', ['authors'=>$this->authorRepository ->findBy(['status'=>true])]);
+        $author = new Author();
+        $author -> setStatus(true) ;
+        $form = $this->createForm(AuthorType::class,$author);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $author = $form->getData();
+
+            $user = $author->getUser();
+            $user->setPassword($passwordHasher->hashPassword(
+                $user,
+                '1234'
+            ));
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($author);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('list_authors');
+        }
+
+        return $this->render('admin/author/list.html.twig', [
+            'form' => $form->createView(),
+            'authors'=>$this->authorRepository ->findBy(['status'=>true])
+        ]);
     }
 
 
