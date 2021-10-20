@@ -27,9 +27,10 @@ class AdminController extends AbstractController
     public function index()
     {
         return $this->render('admin/base.html.twig', [
-            'nbArticles' => $this->articleRepository->countArticles(),
-            'nbCategories' => $this->categoryRepository->countCategories(),
-            'nbAuthors' => $this->authorRepository->countAuthors()
+            'articles' => $this->articleRepository->findBy(['status'=>true]),
+            'categories' => $this->categoryRepository->findBy(['status'=>true]),
+            'authors' => $this->authorRepository->findBy(['status'=>true]),
+            'archives' => $this->articleRepository->findBy(['status'=>false]),
         ]);
     }
 

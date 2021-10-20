@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,10 +15,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class CategoryController extends AbstractController
 {
     private CategoryRepository $categoryRepository;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(CategoryRepository $categoryRepository)
+    public function __construct(CategoryRepository $categoryRepository, EntityManagerInterface $entityManager)
     {
         $this->categoryRepository = $categoryRepository;
+        $this->entityManager = $entityManager;
     }
 
     /* ADMIN */
@@ -37,9 +40,8 @@ class CategoryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $category = $form->getData();
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($category);
-            $entityManager->flush();
+            $this->entityManager->persist($category);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('list_categories');
         }
@@ -50,39 +52,6 @@ class CategoryController extends AbstractController
         ]);
     }
 
-
-      /**
-     * @Route("/admin/category/form/{id}", name="form_category")
-     * Ajout et modification categorie
-     * 
-     */
-    public function form(Request $request,$id = 0)
-    {
-        $category = new Category();
-        $category -> setStatus(true) ;
-        $titre = 'Modification';
-
-        $id != 0 ? $category = $this->categoryRepository->find($id) :  $titre = 'Ajout';
-
-        $form = $this->createForm(CategoryType::class,$category);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
-            
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($category);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('list_categories');
-        }
-
-        return $this->render('admin/category/form.html.twig', [
-            'form' => $form->createView(),
-            'titre' => $titre
-        ]);
-    }
-    
     /**
      * @Route("/admin/category/delete", name="delete_category")
      * Suppression categorie
@@ -93,16 +62,37 @@ class CategoryController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $category = $this->categoryRepository->find($request->request->get('id'));
             $articles = $category->getArticles();
-    
-            $entityManager = $this->getDoctrine()->getManager();
-    
+
             foreach ($articles as $key => $article) {
                 $article -> setStatus(false);
-                $entityManager->persist($article); 
+                $this->entityManager->persist($article);
             }
     
-            $category -> setStatus(false); 
-            $entityManager->flush();
+            $category -> setStatus(false);
+            $this->entityManager->flush();
+            return new JsonResponse(['res' => 1]);
+        }
+
+        return new JsonResponse(['res' => 0]);
+    }
+
+    /**
+     * @Route("/admin/category/archive/delete", name="delete_archive_category")
+     * Suppression définitive categorie
+     *
+     */
+    public function deleteArchive(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $category = $this->categoryRepository->find($request->request->get('id'));
+            $articles = $category->getArticles();
+
+            foreach ($articles as $key => $article) {
+                $this->entityManager->remove($article);
+            }
+
+            $this->entityManager->remove($category);
+            $this->entityManager->flush();
             return new JsonResponse(['res' => 1]);
         }
 
@@ -117,9 +107,8 @@ class CategoryController extends AbstractController
     {
         $category = $this->categoryRepository->find($id);
         $category->setStatus(true);
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($category);
-        $entityManager->flush();
+        $this->entityManager->persist($category);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('list_categories');
     }

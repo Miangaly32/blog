@@ -17,6 +17,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
  *     collectionOperations={"get"},
  *     itemOperations={"get"},
@@ -54,14 +55,14 @@ class Article
 
     /**
      * @ORM\ManyToOne(targetEntity=Author::class, inversedBy="articles")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      * @Groups("article:read")
      */
     private $author;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="articles")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      * @Groups("article:read")
      */
     private $category;
@@ -94,6 +95,21 @@ class Article
      * @Groups("article:read")
      */
     private $tags;
+
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $created_at;
+
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $updated_at;
+
+    /**
+     * @ORM\Column(type="datetime",nullable=true)
+     */
+    private $archived_at;
 
     public function __construct()
     {
@@ -255,6 +271,49 @@ class Article
     public function removeTag(Tag $tag): self
     {
         $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAt(): self
+    {
+        $this->created_at = new \DateTime();
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setUpdatedAt(): self
+    {
+        $this->updated_at = new \DateTime();
+
+        return $this;
+    }
+
+    public function getArchivedAt(): ?\DateTimeInterface
+    {
+        return $this->archived_at;
+    }
+
+    public function setArchivedAt(\DateTimeInterface $archived_at): self
+    {
+        $this->archived_at = $archived_at;
 
         return $this;
     }

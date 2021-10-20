@@ -19,6 +19,10 @@
             {{ form.articleDate.vars.label }}
             {{ form_widget(form.articleDate,{'attr':{'class':'form-control-lg'}}) }}
         </div>
+        <div class="col-3">
+            {{ form.archived_at.vars.label }}
+            {{ form_widget(form.archived_at,{'attr':{'class':'form-control-lg'}}) }}
+        </div>
     </div>
     <div class="row mb-3">
         <div class="col-2">
@@ -48,7 +52,7 @@
     </div>
 
     <div class="row mb-3">
-        <div class="col-3">
+        <div class="col-6">
             {{ form.tags.vars.label }}
             {{ form_widget(form.tags,{'attr':{'class':'form-control-lg','data-role':'tagsinput'}}) }}
         </div>
@@ -67,6 +71,12 @@
             $('.custom-file-input').on('change', function (event) {
                 let inputFile = event.currentTarget;
                 $(inputFile).parent().find('.custom-file-label').html(inputFile.files[0].name);
+            });
+
+            $('.bootstrap-tagsinput input').on('keypress', function(e){
+                if (e.keyCode == 13){
+                    e.preventDefault();
+                };
             });
         });
     </script>

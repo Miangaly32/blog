@@ -17,16 +17,22 @@
             <div class="card m-2" style="width:30%;height: 460px" >
                 <div class="card-body">
                     <h5 class="card-title">{{ article.title }}</h5>
+                    {% if article.author %}
                     <span style="font-size:13px">{{ article.author.user.name }}</span>
+                    {% else %}
+                        <span style="font-size:13px">Non renseigné</span>
+                    {% endif %}
                     <img class="img-fluid" style="width:100%;" src={{"http://localhost:8080/uploads/"~ article.thumbnail}} alt={{ article.title }} />
                     <div class="card-paragraph mb-4 mt-2">
                     {{ article.extract | raw }}
                     </div>
+                    <div class=fixed-bottom">
                     <a href="{{ path('detail_article', {id: article.id}) }}" class="edit">Voir plus</a>
                     {% if is_granted('ROLE_ADMIN') or article.author.user == app.user %}
-                    <a style=" cursor: pointer" id-article="{{article.id}}" class="deleteLink"  url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit float-end" id="password-edit" >delete_outline</span></a>
-                    <a href="{{ path('form_article', {id: article.id}) }}"><span class="material-icons-outlined edit float-end" id="password-edit" >edit</span></a>
+                        <a style=" cursor: pointer" id-article="{{article.id}}" class="deleteLink"  url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit float-end" id="password-edit" >delete_outline</span></a>
+                        <a href="{{ path('form_article', {id: article.id}) }}"><span class="material-icons-outlined edit float-end" id="password-edit" >edit</span></a>
                     {% endif %}
+                    </div>
                 </div>
             </div>
         {% endfor %}
@@ -41,7 +47,7 @@
           <p> Etes-vous sûr de vouloir supprimer cet article?</p>
           <input type="hidden" id="url" value='' />
           <input type="hidden" id="id" value='' />
-          <button type="button" class="btn btn-link blue-button" data-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
           <button type="button" id="deleteBtn" class="btn btn-link blue-button">
                   Valider
           </button>

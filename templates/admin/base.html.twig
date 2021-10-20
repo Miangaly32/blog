@@ -26,7 +26,8 @@
           rel="stylesheet"
   />
 
-  <link href="{{ asset('css/admin.css?v=5') }}" rel="stylesheet" type="text/css">
+  <link href="{{ asset('css/admin.css?v=6') }}" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="{{ asset('css/bootstrap-tagsinput.css') }}">
 </head>
 
 <body>
@@ -66,6 +67,7 @@
             </div>
           </div>
         </a>
+        {% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('list_authors') }}" class="list-group-item list-group-item-action py-3 ripple {{  app.request.get('_route') == 'list_authors' ? 'active '}}">
           <div class="row mt-1">
             <div class="col-3">
@@ -86,6 +88,7 @@
             </div>
           </div>
         </a>
+        {% endif %}
       </div>
   </nav>
   <!-- Sidebar -->
@@ -176,68 +179,34 @@
           >
             <!-- Indicators -->
             <div class="carousel-indicators">
-              <button
-                type="button"
-                data-mdb-target="#carouselBasicExample"
-                data-mdb-slide-to="0"
-                class="active"
-                aria-current="true"
-                aria-label="Slide 1"
-              ></button>
-              <button
-                type="button"
-                data-mdb-target="#carouselBasicExample"
-                data-mdb-slide-to="1"
-                aria-label="Slide 2"
-              ></button>
-              <button
-                type="button"
-                data-mdb-target="#carouselBasicExample"
-                data-mdb-slide-to="2"
-                aria-label="Slide 3"
-              ></button>
+              {% for key, article in articles %}
+                <button
+                        type="button"
+                        data-mdb-target="#carouselBasicExample"
+                        data-mdb-slide-to={{ key }}
+                        class="active"
+                        aria-current="true"
+                        aria-label="Slide {{ key+1 }}"
+                ></button>
+              {%  endfor %}
             </div>
 
             <!-- Inner -->
             <div class="carousel-inner">
+              {% for key, article in articles %}
               <!-- Single item -->
-              <div class="carousel-item active">
+              <div class="carousel-item {% if key==0 %} active {% endif %}" >
                 <img
-                  src="https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg"
                   class="d-block w-100"
-                  alt="..."
+                  src={{"http://localhost:8080/uploads/"~ article.thumbnail}}
+                  alt={{ article.title }}
+                  style="height:300px"
                 />
                 <div class="carousel-caption d-none d-md-block">
-                  <h5>First slide label</h5>
-                  <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                  <h5>{{ article.title }}</h5>
                 </div>
               </div>
-
-              <!-- Single item -->
-              <div class="carousel-item">
-                <img
-                  src="https://mdbootstrap.com/img/Photos/Slides/img%20(22).jpg"
-                  class="d-block w-100"
-                  alt="..."
-                />
-                <div class="carousel-caption d-none d-md-block">
-                  <h5>Second slide label</h5>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
-              </div>
-
-              <!-- Single item -->
-              <div class="carousel-item">
-                <img
-                  src="https://mdbootstrap.com/img/Photos/Slides/img%20(23).jpg"
-                  class="d-block w-100"
-                  alt="..."
-                />
-                <div class="carousel-caption d-none d-md-block">
-                  <h5>Third slide label</h5>
-                  <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-                </div>
-              </div>
+              {% endfor %}
             </div>
             <!-- Inner -->
 
@@ -262,34 +231,36 @@
             </button>
           </div>
           <!-- Carousel wrapper -->
-          <p class="py-3 ms-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
-          <span class="open-button">OUVRIR</span>
+          <p class="py-3 ms-3"></p>
+          <a href="{{ path('list_article') }}"><span class="open-button">OUVRIR</span></a>
         </div>
+
         <div class="col-md-5 col-sm-12 ms-3">
           <div class="row bg-white p-3 rounded">
             <h6 class="title">Catégories</h6>
             <div class="ms-2">
               <ul>
-                <li>lorem ipsum</li>
-                <li>lorem ipsum</li>
-                <li>lorem ipsum</li>
+                {% for category in categories %}
+                  <li>{{ category.name }}</li>
+                {% endfor %}
               </ul>
             </div>
-            <span class="open-button">OUVRIR</span>
+            <a href="{{ path('list_categories') }}"><span class="open-button">OUVRIR</span></a>
           </div>
           <div class="row mt-5 bg-white p-3 rounded">
             <h6 class="title">Auteurs</h6>
             <div class="ms-2">
               <ul>
-                <li>lorem ipsum</li>
-                <li>lorem ipsum</li>
-                <li>lorem ipsum</li>
+                {% for author in authors %}
+                  <li>{{ author.user.name }}</li>
+                {% endfor %}
               </ul>
             </div>
             <span class="open-button">OUVRIR</span>
           </div>
         </div>
       </div>
+
       <div class="row mt-5 mb-4">
         <div class="col-md-6 col-sm-12 bg-white p-3 rounded">
           <h6 class="title">Archives</h6>
@@ -301,68 +272,34 @@
           >
             <!-- Indicators -->
             <div class="carousel-indicators">
-              <button
-                      type="button"
-                      data-mdb-target="#carouselBasicExample"
-                      data-mdb-slide-to="0"
-                      class="active"
-                      aria-current="true"
-                      aria-label="Slide 1"
-              ></button>
-              <button
-                      type="button"
-                      data-mdb-target="#carouselBasicExample"
-                      data-mdb-slide-to="1"
-                      aria-label="Slide 2"
-              ></button>
-              <button
-                      type="button"
-                      data-mdb-target="#carouselBasicExample"
-                      data-mdb-slide-to="2"
-                      aria-label="Slide 3"
-              ></button>
+              {% for key, article in archives %}
+                <button
+                        type="button"
+                        data-mdb-target="#carouselBasicExample"
+                        data-mdb-slide-to={{ key }}
+                        class="active"
+                        aria-current="true"
+                        aria-label="Slide {{ key+1 }}"
+                ></button>
+              {%  endfor %}
             </div>
 
             <!-- Inner -->
             <div class="carousel-inner">
-              <!-- Single item -->
-              <div class="carousel-item active">
-                <img
-                        src="https://mdbootstrap.com/img/Photos/Slides/img%20(15).jpg"
-                        class="d-block w-100"
-                        alt="..."
-                />
-                <div class="carousel-caption d-none d-md-block">
-                  <h5>First slide label</h5>
-                  <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+              {% for key, article in archives %}
+                <!-- Single item -->
+                <div class="carousel-item {% if key==0 %} active {% endif %}" >
+                  <img
+                          class="d-block w-100"
+                          src={{"http://localhost:8080/uploads/"~ article.thumbnail}}
+                          alt={{ article.title }}
+                          style="height:300px"
+                  />
+                  <div class="carousel-caption d-none d-md-block">
+                    <h5>{{ article.title }}</h5>
+                  </div>
                 </div>
-              </div>
-
-              <!-- Single item -->
-              <div class="carousel-item">
-                <img
-                        src="https://mdbootstrap.com/img/Photos/Slides/img%20(22).jpg"
-                        class="d-block w-100"
-                        alt="..."
-                />
-                <div class="carousel-caption d-none d-md-block">
-                  <h5>Second slide label</h5>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
-              </div>
-
-              <!-- Single item -->
-              <div class="carousel-item">
-                <img
-                        src="https://mdbootstrap.com/img/Photos/Slides/img%20(23).jpg"
-                        class="d-block w-100"
-                        alt="..."
-                />
-                <div class="carousel-caption d-none d-md-block">
-                  <h5>Third slide label</h5>
-                  <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-                </div>
-              </div>
+              {% endfor %}
             </div>
             <!-- Inner -->
 
@@ -387,8 +324,9 @@
             </button>
           </div>
           <!-- Carousel wrapper -->
-          <p class="py-3 ms-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p>
-          <span class="open-button">OUVRIR</span>
+          <p class="py-3 ms-3"></p>
+          <a href="{{ path('list_archives') }}"><span class="open-button">OUVRIR</span></a>
+
         </div>
       </div>
     {% endblock%}
@@ -396,16 +334,14 @@
 </main>
 
 
-
   {% block modal %}
   {% endblock%}
 
   <!-- MDB -->
-  <script
-          type="text/javascript"
-          src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"
-  ></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/3.6.0/mdb.min.js"></script>
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="{{ asset('js/bootstrap-tagsinput.js?v=2') }}"></script>
 
   {% block documentReady %}
 

@@ -95,3 +95,7 @@ body{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.bg-blue {
+    background: #0061AE;
+}

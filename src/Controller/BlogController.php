@@ -63,12 +63,12 @@ class BlogController extends AbstractController
     /**
      * @Route("/admin/article/form/{id}", name="form_article")
      * Ajout et modification articles
-     * 
+     *
      */
     public function form(Request $request, $id = 0,AuthorRepository $authorRepository, SluggerInterface $slugger)
     {
         $article = new Article();
-        $article->setArticleDate(new \DateTime('now'));
+        $article->setArticleDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
         $article->setStatus(true);
 
         $titre = 'Modification';
@@ -125,6 +125,7 @@ class BlogController extends AbstractController
     {
         if ($request->isXmlHttpRequest()) {
             $article = $this->articleRepository->find($request->request->get('id'));
+            $article->setArchivedAt(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
             $article->setStatus(false);
             $this->entityManager->persist($article);
             $this->entityManager->flush();
@@ -134,6 +135,24 @@ class BlogController extends AbstractController
 
         return new JsonResponse(['res' => 0]);
     }
+
+    /**
+     * @Route("/admin/article/archive/delete", name="delete_archive_article")
+     * Suppression définitif d'article
+     */
+    public function deleteArchive(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $article = $this->articleRepository->find($request->request->get('id'));
+            $this->entityManager->remove($article);
+            $this->entityManager->flush();
+
+            return new JsonResponse(['res' => 1]);
+        }
+
+        return new JsonResponse(['res' => 0]);
+    }
+
 
     /**
      * @Route("/admin/article/restore/{id}", name="restore_article")
