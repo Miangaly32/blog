@@ -22,9 +22,9 @@
             </thead>
             <tbody>
            
-             {% for author in authors %}
+             {% for key,author in authors %}
                 <tr id="{{author.id}}">
-                    <td>{{ author.id }}</td>
+                    <td>{{ key+1 }}</td>
                     <td>{{ author.user.name }}</td>
                     <td>{{ author.user.email }}</td>
                     <td>

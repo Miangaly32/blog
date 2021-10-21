@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
     <div class="mb-2">
-        <a class="btn btn-primary add-button" href={{ path('form_article') }}>
+        <a class="btn btn-primary add-button" href="{{ path('form_article') }}">
             <i class="fa fa-plus me-2" aria-hidden="true"></i>Ajouter
         </a>
     </div>
@@ -22,7 +22,7 @@
                     {% else %}
                         <span style="font-size:13px">Non renseigné</span>
                     {% endif %}
-                    <img class="img-fluid" style="width:100%;" src={{"http://localhost:8080/uploads/"~ article.thumbnail}} alt={{ article.title }} />
+                    <img class="img-fluid" style="width:100%;" src={{"http://localhost:8080/uploads/"~ article.thumbnail}} alt="{{ article.title }}" />
                     <div class="card-paragraph mb-4 mt-2">
                     {{ article.extract | raw }}
                     </div>

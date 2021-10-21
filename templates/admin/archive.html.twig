@@ -15,6 +15,7 @@
             <table class="table table-striped table-sm">
                 <thead>
                   <tr>
+                      <th>Classement</th>
                       <th>Titre</th>
                       <th>Catégorie</th>
                       <th>Auteur</th>
@@ -23,17 +24,18 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for article in articles %}
+                  {% for key,article in articles %}
                       <tr id="{{article.id}}">
+                          <td>{{ key+1 }}</td>
                           <td>{{ article.title }}</td>
                           <td>{{ article.category.name }}</td>
                           <td>{{ article.author.user.name }}</td>
                           <td>{{ article.archivedat|date('d/m/Y h:i:s') }}</td>
                           <td>
-                               <a href="{{ path('restore_article', {id: article.id}) }}" >
+                               <a href="{{ path('restore_article', {id: article.id}) }}" title='Restaurer' >
                                   <span class="material-icons-outlined blue-button">unarchive</span>
                                </a>
-                              <a id-article="{{article.id}}" class="deleteLinkArticle pointer"  url="{{ path('delete_archive_article') }}">
+                              <a id-article="{{article.id}}" class="deleteLinkArticle pointer" title='Supprimer'  url="{{ path('delete_archive_article') }}">
                                   <span class="material-icons-outlined text-danger">delete_forever</span>
                               </a>
                           </td>
@@ -50,19 +52,23 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
-                        <th>Nom</th>
+                        <th>Classement</th>
+                        <th>Catégorie</th>
+                        <th>Archivé le</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for category in categories %}
+                    {% for key,category in categories %}
                     <tr id="{{category.id}}">
+                        <td>{{ key+1 }}</td>
                         <td>{{ category.name }}</td>
+                        <td>{{ category.archivedat|date('d/m/Y h:i:s') }}</td>
                         <td>
-                            <a href="{{ path('restore_category', {id: category.id}) }}" >
+                            <a href="{{ path('restore_category', {id: category.id}) }}" title='Restaurer' >
                                 <span class="material-icons-outlined blue-button">unarchive</span>
                             </a>
-                            <a id-category="{{category.id}}" class="deleteLinkCategory pointer"  url="{{ path('delete_archive_category') }}">
+                            <a id-category="{{category.id}}" class="deleteLinkCategory pointer" title='Supprimer' url="{{ path('delete_archive_category') }}">
                                 <span class="material-icons-outlined text-danger">delete_forever</span>
                             </a>
                         </td>
@@ -79,19 +85,23 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
+                        <th>Classement</th>
                         <th>Nom</th>
+                        <th>Archivé le</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for author in authors %}
+                    {% for key,author in authors %}
                     <tr id="{{author.id}}">
+                        <td>{{ key+1 }}</td>
                         <td>{{ author.user.name }}</td>
+                        <td>{{ author.archivedat|date('d/m/Y h:i:s') }}</td>
                         <td>
-                            <a href="{{ path('restore_author', {id: author.id}) }}" >
+                            <a href="{{ path('restore_author', {id: author.id}) }}" title='Restaurer' >
                                 <span class="material-icons-outlined blue-button">unarchive</span>
                             </a>
-                            <a id-author="{{author.id}}" class="deleteLinkAuthor pointer"  url="{{ path('delete_archive_author') }}">
+                            <a id-author="{{author.id}}" class="deleteLinkAuthor pointer" title='Supprimer'  url="{{ path('delete_archive_author') }}">
                                 <span class="material-icons-outlined text-danger">delete_forever</span>
                             </a>
                         </td>

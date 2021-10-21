@@ -21,9 +21,9 @@
             </thead>
             <tbody>
 
-            {% for category in categories %}
+            {% for key,category in categories %}
             <tr id="{{category.id}}">
-                <td>{{ category.id }}</td>
+                <td>{{ key+1 }}</td>
                 <td>{{ category.name }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                 <td>

@@ -311,7 +311,7 @@ class Article
         return $this->archived_at;
     }
 
-    public function setArchivedAt(\DateTimeInterface $archived_at): self
+    public function setArchivedAt(?\DateTimeInterface $archived_at): self
     {
         $this->archived_at = $archived_at;
 
