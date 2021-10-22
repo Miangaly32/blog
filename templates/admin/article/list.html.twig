@@ -22,7 +22,11 @@
                     {% else %}
                         <span style="font-size:13px">Non renseigné</span>
                     {% endif %}
-                    <img class="img-fluid" style="width:100%;" src={{"http://localhost:8080/uploads/"~ article.thumbnail}} alt="{{ article.title }}" />
+                    {% if article.thumbnail %}
+                        <img class="img-fluid" style="width:100%;" src={{"http://localhost:8080/uploads/"~ article.thumbnail}} alt="{{ article.title }}" />
+                    {% else %}
+                        <img class="img-fluid" style="width:100%;" src={{"http://localhost:8080/img/thumbnail.png"}} alt="{{ article.title }}" />
+                    {% endif %}
                     <div class="card-paragraph mb-4 mt-2">
                     {{ article.extract | raw }}
                     </div>

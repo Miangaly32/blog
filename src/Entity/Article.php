@@ -68,7 +68,7 @@ class Article
     private $category;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default" : 0})
      * @Groups("article:read")
      */
     private $status;

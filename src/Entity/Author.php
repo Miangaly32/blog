@@ -13,6 +13,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 
 /**
  * @ORM\Entity(repositoryClass=AuthorRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
  *     collectionOperations={"get"},
  *     itemOperations={"get"},

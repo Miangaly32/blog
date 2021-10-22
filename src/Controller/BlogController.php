@@ -45,9 +45,11 @@ class BlogController extends AbstractController
      * Liste des articles
      * 
      */
-    public function list(ArticleRepository $articleRepository)
+    public function list()
     {
-        return $this->render('admin/article/list.html.twig', ['articles' => $this->articleRepository->findBy(['status'=>true])]);
+        return $this->render('admin/article/list.html.twig', [
+            'articles' => $this->articleRepository->findBy(['archived_at'=>null])
+        ]);
     }
 
     /**
@@ -55,7 +57,7 @@ class BlogController extends AbstractController
      * Détail article
      *
      */
-    public function details(ArticleRepository $articleRepository,$id)
+    public function details($id)
     {
         return $this->render('admin/article/detail.html.twig', ['article' => $this->articleRepository->find($id)]);
     }
@@ -69,7 +71,6 @@ class BlogController extends AbstractController
     {
         $article = new Article();
         $article->setArticleDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
-        $article->setStatus(true);
 
         $titre = 'Modification';
 
@@ -113,7 +114,8 @@ class BlogController extends AbstractController
 
         return $this->render('admin/article/add.html.twig', [
             'form' => $form->createView(),
-            'titre' => $titre
+            'titre' => $titre,
+            'article' => $article
         ]);
     }
 
@@ -173,5 +175,18 @@ class BlogController extends AbstractController
         $this->entityManager->flush();
 
         return $this->redirectToRoute('list_article');
+    }
+
+    /**
+     * @Route("/admin/article/publish/{id}", name="publish")
+     * Publier l'article
+     */
+    public function publish(int $id)
+    {
+        $article = $this->articleRepository->find($id);
+        $article->setStatus(true);
+        $this->entityManager->flush();
+
+        return $this->redirectToRoute('form_article',['id' => $id]);
     }
 }

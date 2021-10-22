@@ -48,14 +48,4 @@ class CategoryRepository extends ServiceEntityRepository
     }
     */
 
-    public function countCategories(): int
-    {
-        return $this->createQueryBuilder('c')
-            ->select('count(c.status)')
-            ->andWhere('c.status = :etat')
-            ->setParameter('etat', true)
-            ->getQuery()
-            ->getSingleScalarResult()
-            ;
-    }
 }
