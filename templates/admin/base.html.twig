@@ -180,12 +180,21 @@
               {% for key, article in articles %}
               <!-- Single item -->
               <div class="carousel-item {% if key==0 %} active {% endif %}" >
+                {% if article.thumbnail %}
                 <img
                   class="d-block w-100"
                   src={{"http://localhost:8080/uploads/"~ article.thumbnail}}
                   alt={{ article.title }}
                   style="height:300px"
                 />
+                {% else %}
+                <img
+                  class="d-block w-100"
+                  src={{"http://localhost:8080/img/thumbnail.png"}}
+                  alt={{ article.title }}
+                  style="height:300px"
+                />
+                {% endif %}
                 <div class="carousel-caption d-none d-md-block">
                   <h5>{{ article.title }}</h5>
                 </div>
