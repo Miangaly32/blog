@@ -32,8 +32,18 @@
     </div>
     <div class="row mb-3">
         <div class="col-4">
-            {{ form.thumbnailFile.vars.label }}
-            {{ form_widget(form.thumbnailFile,{'attr':{'class':'form-control-lg'}}) }}
+            Image de la vignette <br />
+            {% if article.thumbnail %}
+                <div class="mt-1">
+                    <img src="{{ asset("uploads/") ~ article.thumbnail }}" alt="{{ article.title }}">
+                </div>
+            {% endif %}
+            <a style=" cursor: pointer"
+               class="btn btn-primary upload" >
+                <span class="material-icons-outlined">
+                file_upload
+                </span>
+            </a>
         </div>
     </div>
 
@@ -68,6 +78,17 @@
      </div>
     {{ form_end(form) }}
 {% endblock %}
+{% block modal %}
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    {{ form(formImage) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{%  endblock %}
 {% block documentReady %}
     <script>
         $(document).ready(function() {
@@ -79,8 +100,33 @@
             $('.bootstrap-tagsinput input').on('keypress', function(e){
                 if (e.keyCode == 13){
                     e.preventDefault();
-                };
+                }
             });
+
+            $('.upload').click(function () {
+                $('#modal').modal('show');
+            });
+
+            $("#form_thumbnail").change(function(event){
+                const input = event.target;
+                const file = input.files[0];
+                const article_id = "{{ article.id }}";
+                const data = new FormData();
+                data.append('file', file, file.name);
+                data.append('article_id', article_id);
+
+                $.ajax({
+                    url: "{{ path('uploadFile') }}",
+                    type: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    cache: false
+                }).done(function( data ) {
+                    $('.modal-body').append(data);
+                });
+            });
+
         });
     </script>
 {% endblock %}

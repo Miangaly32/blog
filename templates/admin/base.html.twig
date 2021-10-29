@@ -26,8 +26,10 @@
           rel="stylesheet"
   />
 
+  <link rel="stylesheet" href="{{ asset('build/app.css') }}">
   <link href="{{ asset('css/admin.css?v=6') }}" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{{ asset('css/bootstrap-tagsinput.css') }}">
+
 </head>
 
 <body>
@@ -183,14 +185,14 @@
                 {% if article.thumbnail %}
                 <img
                   class="d-block w-100"
-                  src={{"http://localhost:8080/uploads/"~ article.thumbnail}}
+                  src="{{ asset('uploads/')~ article.thumbnail }}"
                   alt={{ article.title }}
                   style="height:300px"
                 />
                 {% else %}
                 <img
                   class="d-block w-100"
-                  src={{"http://localhost:8080/img/thumbnail.png"}}
+                  src="{{ asset('img/thumbnail.png') }}"
                   alt={{ article.title }}
                   style="height:300px"
                 />
@@ -282,12 +284,21 @@
               {% for key, article in archives %}
                 <!-- Single item -->
                 <div class="carousel-item {% if key==0 %} active {% endif %}" >
+                  {% if article.thumbnail %}
                   <img
                           class="d-block w-100"
-                          src={{"http://localhost:8080/uploads/"~ article.thumbnail}}
+                          src="{{ asset('uploads/')~ article.thumbnail}}"
                           alt={{ article.title }}
                           style="height:300px"
                   />
+                  {% else %}
+                    <img
+                            class="d-block w-100"
+                            src="{{ asset('img/thumbnail.png') }}"
+                            alt={{ article.title }}
+                            style="height:300px"
+                    />
+                  {% endif %}
                   <div class="carousel-caption d-none d-md-block">
                     <h5>{{ article.title }}</h5>
                   </div>
@@ -335,8 +346,11 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="{{ asset('js/bootstrap-tagsinput.js?v=2') }}"></script>
+  <script src="{{ asset('build/app.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('build/runtime.js') }}"></script>
+  <script type="text/javascript" src="{{ asset('build/vendors-node_modules_symfony_stimulus-bridge_dist_index_js-node_modules_symfony_ux-cropperjs_-4021aa.js') }}"></script>
 
-  {% block documentReady %}
+{% block documentReady %}
 
   {% endblock %}
 </body>

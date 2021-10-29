@@ -129,6 +129,9 @@
             "config/packages/fos_ckeditor.yaml"
         ]
     },
+    "guzzlehttp/psr7": {
+        "version": "2.1.0"
+    },
     "helios-ag/fm-elfinder-bundle": {
         "version": "10.0",
         "recipe": {
@@ -141,6 +144,9 @@
             "config/packages/fm_elfinder.yaml",
             "config/routes/fm_elfinder.yaml"
         ]
+    },
+    "intervention/image": {
+        "version": "2.7.0"
     },
     "laminas/laminas-code": {
         "version": "4.4.3"
@@ -222,11 +228,20 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
+    "psr/http-factory": {
+        "version": "1.0.1"
+    },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/link": {
         "version": "1.0.0"
     },
     "psr/log": {
         "version": "1.1.4"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
     },
     "sebastian/cli-parser": {
         "version": "1.0.1"
@@ -626,6 +641,9 @@
     "symfony/twig-pack": {
         "version": "v1.0.1"
     },
+    "symfony/ux-cropperjs": {
+        "version": "v1.3.0"
+    },
     "symfony/validator": {
         "version": "4.3",
         "recipe": {
@@ -660,6 +678,28 @@
             "config/packages/dev/web_profiler.yaml",
             "config/packages/test/web_profiler.yaml",
             "config/routes/dev/web_profiler.yaml"
+        ]
+    },
+    "symfony/webpack-encore-bundle": {
+        "version": "1.12",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.9",
+            "ref": "0f274572ea315eb3b5884518a50ca43f211b4534"
+        },
+        "files": [
+            "assets/styles/app.css",
+            "assets/controllers.json",
+            "assets/controllers/hello_controller.js",
+            "assets/app.js",
+            "assets/bootstrap.js",
+            "config/packages/webpack_encore.yaml",
+            "config/packages/test/webpack_encore.yaml",
+            "config/packages/prod/webpack_encore.yaml",
+            "config/packages/assets.yaml",
+            "package.json",
+            "webpack.config.js"
         ]
     },
     "symfony/yaml": {
