@@ -1,0 +1,109 @@
+{% extends '/admin/base.html.twig' %}
+
+{% block breadcumbs %}
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ path('admin') }}">Article</a></li>
+        <li class="breadcrumb-item active" aria-current="page"><a href="{{ path('list_article') }}">Liste</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Tableau</li>
+    </ol>
+{% endblock %}
+{% block content %}
+    <div class="mb-2">
+        <a class="btn btn-primary add-button" href="{{ path('form_article') }}">
+            <i class="fa fa-plus me-2" aria-hidden="true"></i>Ajouter
+        </a>
+    </div>
+     <div class="row align-items-center justify-content-start">
+            <table class="table table-striped table-sm ">
+                <thead>
+                    <tr>
+                        <th>Classement</th>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Extrait</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for key,article in articles %}
+                    <tr id="{{article.id}}">
+                        <td class="col-1">{{ key+1 }}</td>
+                        <td>{{ article.title }}</td>
+                        {% if article.author %}
+                            <td style="font-size:13px">{{ article.author.user.name }}</td>
+                        {% else %}
+                            <td style="font-size:13px">Non renseigné</td>
+                        {% endif %}
+                        <td>{{ article.extract | raw }}
+                            <a href="{{ path('detail_article', {id: article.id}) }}" class="edit">Voir plus</a>
+                        </td>
+                        <td>
+                            {% if article.thumbnail %}
+                                <img class="img-fluid" style="width:100%;" src="{{asset('uploads/')~ article.thumbnail}}" alt="{{ article.title }}" />
+                            {% else %}
+                                <img class="img-fluid" style="width:100%;" src="{{asset('img/thumbnail.png')}}" alt="{{ article.title }}" />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if is_granted('ROLE_ADMIN') or article.author.user == app.user %}
+                                <a style=" cursor: pointer" data-id-article="{{article.id}}" class="deleteLink"  data-url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit float-end" id="password-edit" >delete_outline</span></a>
+                                <a href="{{ path('form_article', {id: article.id}) }}"><span class="material-icons-outlined edit float-end" id="password-edit" >edit</span></a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+     </div>
+{% endblock %}
+    {% block modal %}
+<!-- Modal -->
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-body text-center">
+          <p> Etes-vous sûr de vouloir supprimer cet article?</p>
+          <input type="hidden" id="url" value='' />
+          <input type="hidden" id="id" value='' />
+          <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
+          <button type="button" id="deleteBtn" class="btn btn-link blue-button">
+                  Valider
+          </button>
+      </div>
+    </div>
+  </div>
+</div>
+    {% endblock %}
+
+{% block documentReady %}
+    <script>
+        $(document).ready(function() {
+            $('.deleteLink').click(function () {
+                $('#url').val($(this).attr('data-url'));
+                $('#id').val($(this).attr('data-id-article'));
+                $('#modal').modal('show');
+            });
+
+            $('#deleteBtn').click(function (e) {
+                e.preventDefault();
+                let url = $('#url').val();
+                let id = $('#id').val();
+
+                $(this).prop("disabled", true);
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+                );
+
+                $.post(url, {id: id}, function (data) {
+                    $('#modal').modal('toggle');
+                    if (data.res === 1) {
+                        $("#" + id).remove();
+                    } else {
+                        alert("Une erreur est survenue");
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

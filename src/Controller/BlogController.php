@@ -54,7 +54,19 @@ class BlogController extends AbstractController
      */
     public function list()
     {
-        return $this->render('admin/article/list.html.twig', [
+       return $this->render('admin/article/list.html.twig', [
+            'articles' => $this->articleRepository->findActives()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/article/listTab", name="list_article_tab")
+     * Liste des articles version tableau
+     *
+     */
+    public function listTab()
+    {
+        return $this->render('admin/article/list_tab.html.twig', [
             'articles' => $this->articleRepository->findActives()
         ]);
     }
@@ -114,6 +126,19 @@ class BlogController extends AbstractController
             $this->entityManager->flush();
 
             $session->clear();
+
+            $dir = $this->getParameter('kernel.project_dir')."/public/temp";
+
+            if (is_dir($dir)) {
+                if ($dh = opendir($dir)) {
+                    while (($file = readdir($dh)) !== false) {
+                        if ($file !== "." && $file !== "..") {
+                            unlink($dir.'/'.$file);
+                        }
+                    }
+                    closedir($dh);
+                }
+            }
 
             return $this->redirectToRoute('list_article');
         }
@@ -180,7 +205,7 @@ class BlogController extends AbstractController
         $imageManager = new ImageManager();
         $crop = new Crop($imageManager,$filename);
         $crop->setOptions( $request->get('crop')['crop']['options']);
-        $image = Image::make($crop->getCroppedImage());
+        $image = Image::make($crop->getCroppedThumbnail(200,150));
 
         if ($image) {
             $image->save($this->getParameter('kernel.project_dir')."/public/uploads/".$request->get('crop')['newFilename']);

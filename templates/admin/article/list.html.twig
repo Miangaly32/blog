@@ -11,10 +11,13 @@
         <a class="btn btn-primary add-button" href="{{ path('form_article') }}">
             <i class="fa fa-plus me-2" aria-hidden="true"></i>Ajouter
         </a>
+        <a class="btn btn-primary add-button" href="{{ path('list_article_tab') }}">
+            Version tableau
+        </a>
     </div>
      <div class="row align-items-center justify-content-start">
         {% for article in articles %}
-            <div class="card m-2" style="width:30%;height: 500px" >
+            <div id="{{ article.id }}" class="card m-2" style="width:30%;height: 500px" >
                 <div class="card-body">
                     <h5 class="card-title">{{ article.title }}</h5>
                     {% if article.author %}
@@ -33,7 +36,7 @@
                     <div class=fixed-bottom">
                     <a href="{{ path('detail_article', {id: article.id}) }}" class="edit">Voir plus</a>
                     {% if is_granted('ROLE_ADMIN') or article.author.user == app.user %}
-                        <a style=" cursor: pointer" id-article="{{article.id}}" class="deleteLink"  url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit float-end" id="password-edit" >delete_outline</span></a>
+                        <a style=" cursor: pointer" data-id-article="{{article.id}}" class="deleteLink"  data-url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit float-end" id="password-edit" >delete_outline</span></a>
                         <a href="{{ path('form_article', {id: article.id}) }}"><span class="material-icons-outlined edit float-end" id="password-edit" >edit</span></a>
                     {% endif %}
                     </div>
@@ -65,8 +68,8 @@
     <script>
         $(document).ready(function() {
             $('.deleteLink').click(function () {
-                $('#url').val($(this).attr('url'));
-                $('#id').val($(this).attr('id-article'));
+                $('#url').val($(this).attr('data-url'));
+                $('#id').val($(this).attr('data-id-article'));
                 $('#modal').modal('show');
             });
 
