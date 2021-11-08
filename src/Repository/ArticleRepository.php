@@ -48,6 +48,18 @@ class ArticleRepository extends ServiceEntityRepository
     }
     */
 
+    public function findActives()
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb
+            ->where('a.archived_at is null')
+            ->orWhere('a.archived_at > :now')
+            ->setParameter('now', new \DateTime());
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
     public function findArchives()
     {
         $qb = $this->createQueryBuilder('a');

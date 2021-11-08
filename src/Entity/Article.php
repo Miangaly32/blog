@@ -68,10 +68,10 @@ class Article
     private $category;
 
     /**
-     * @ORM\Column(type="boolean", options={"default" : 0})
+     * @ORM\Column(type="boolean")
      * @Groups("article:read")
      */
-    private $status;
+    private $status = 0;
 
     /**
      * @ORM\Column(type="text")
@@ -110,6 +110,16 @@ class Article
      * @ORM\Column(type="datetime",nullable=true)
      */
     private $archived_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image_description;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image_metadata;
 
     public function __construct()
     {
@@ -314,6 +324,30 @@ class Article
     public function setArchivedAt(?\DateTimeInterface $archived_at): self
     {
         $this->archived_at = $archived_at;
+
+        return $this;
+    }
+
+    public function getImageDescription(): ?string
+    {
+        return $this->image_description;
+    }
+
+    public function setImageDescription(?string $image_description): self
+    {
+        $this->image_description = $image_description;
+
+        return $this;
+    }
+
+    public function getImageMetadata(): ?string
+    {
+        return $this->image_metadata;
+    }
+
+    public function setImageMetadata(?string $image_metadata): self
+    {
+        $this->image_metadata = $image_metadata;
 
         return $this;
     }

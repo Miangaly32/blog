@@ -4,27 +4,22 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Form\Type\ArticleType;
+use App\Form\Type\CropType;
 use App\Repository\AuthorRepository;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Intervention\Image\ImageManager;
 use Intervention\Image\ImageManagerStatic as Image;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\UX\Cropperjs\Factory\CropperInterface;
-use Symfony\UX\Cropperjs\Form\CropperType;
 use Symfony\UX\Cropperjs\Model\Crop;
 
 class BlogController extends AbstractController
@@ -60,7 +55,7 @@ class BlogController extends AbstractController
     public function list()
     {
         return $this->render('admin/article/list.html.twig', [
-            'articles' => $this->articleRepository->findBy(['archived_at'=>null])
+            'articles' => $this->articleRepository->findActives()
         ]);
     }
 
@@ -88,6 +83,13 @@ class BlogController extends AbstractController
 
         $id != 0 ? $article = $this->articleRepository->find($id) : $titre = 'Ajout';
 
+        $session = new Session();
+        if ($session->get("imageCropped")) {
+            $article->setThumbnail($session->get("imageCropped"));
+            $article->setImageDescription($session->get("imageDescription"));
+            $article->setImageMetadata($session->get("imageMetadata"));
+        }
+
         $form = $this->createForm(ArticleType::class, $article);
 
         $formImage = $this->createFormBuilder()
@@ -102,35 +104,18 @@ class BlogController extends AbstractController
 
             $article->setAuthor($authorRepository->findOneBy(["user"=> $user]));
 
-            /** @var UploadedFile $brochureFile */
-            $thumbnailFile = $form->get('thumbnailFile')->getData();
+            $thumbnailFile = $session->get("imageCropped");
 
             if ($thumbnailFile) {
-                $originalFilename = pathinfo($thumbnailFile->getClientOriginalName(), PATHINFO_FILENAME);
-                // this is needed to safely include the file name as part of the URL
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid('', true).'.'.$thumbnailFile->guessExtension();
-
-                // Move the file to the directory where images are stored
-                try {
-                    $thumbnailFile->move('uploads',
-                        $newFilename
-                    );
-                } catch (FileException $e) {
-                    dump($e);
-                }
-
-                $article->setThumbnail($newFilename);
+                $article->setThumbnail($thumbnailFile);
             }
 
             $this->entityManager->persist($article);
             $this->entityManager->flush();
 
-            return $this->redirectToRoute('list_article');
-        }
+            $session->clear();
 
-        if ($formImage->isSubmitted() && $formImage->isValid()) {
-            dd($formImage->getData());
+            return $this->redirectToRoute('list_article');
         }
 
         return $this->render('admin/article/add.html.twig', [
@@ -165,24 +150,17 @@ class BlogController extends AbstractController
             }
 
             $crop = $cropper->createCrop($this->getParameter('kernel.project_dir').'/public/temp/'.$newFilename);
-            $crop->setCroppedMaxSize(2000, 1500);
 
-            $form = $this->createFormBuilder(['crop' => $crop])
-                ->setAction($this->generateUrl('cropImage'))
-                ->add('crop', CropperType::class, [
-                    'public_url' => '/temp/'.$newFilename
-                ])
-                ->add('newFilename',HiddenType::class, [
-                    'data' => $newFilename,
-                ])
-                ->add('articleId',HiddenType::class, [
-                    'data' => $articleId,
-                ])
-                ->add('image_description', TextType::class, ['label'  => 'Image description'])
-                ->add('image_metadata', TextType::class, ['label'  => 'Image metadata'])
-                ->add('save',SubmitType::class)
-                ->getForm()
-            ;
+            $form = $this->createForm(
+                CropType::class,
+                [
+                    "crop" => $crop],
+                [
+                    "action" => $this->generateUrl('cropImage'),
+                    "newFilename" => $newFilename,
+                    "articleId" => $articleId
+                ]
+            );
 
             return $this->render('cropper/index.html.twig', [
                 'formCrop' => $form->createView()
@@ -198,26 +176,30 @@ class BlogController extends AbstractController
      */
     public function cropImage(Request $request)
     {
-        $filename = $this->getParameter('kernel.project_dir').'/public/temp/'.$request->get('form')['newFilename'];
+        $filename = $this->getParameter('kernel.project_dir').'/public/temp/'.$request->get('crop')['newFilename'];
         $imageManager = new ImageManager();
         $crop = new Crop($imageManager,$filename);
-        $crop->setOptions( $request->get('form')['crop']['options']);
-        $image = Image::make($crop->getCroppedThumbnail(200, 150));
-
-        $article = new Article();
+        $crop->setOptions( $request->get('crop')['crop']['options']);
+        $image = Image::make($crop->getCroppedImage());
 
         if ($image) {
-            $image->save($this->getParameter('kernel.project_dir')."/public/uploads/".$request->get('form')['newFilename']);
+            $image->save($this->getParameter('kernel.project_dir')."/public/uploads/".$request->get('crop')['newFilename']);
 
-            $article = $this->articleRepository->find( $request->get('form')['articleId']);
+            $session = new Session();
+            $session->set('imageCropped', $request->get('crop')['newFilename']);
+            $session->set('imageMetadata', $request->get('crop')['image_metadata']);
+            $session->set('imageDescription', $request->get('crop')['image_description']);
 
-            $article->setThumbnail($request->get('form')['newFilename']);
-
-            $this->entityManager->persist($article);
-            $this->entityManager->flush();
+            if ($request->get('crop')['articleId']) {
+                $article = $this->articleRepository->find($request->get('crop')['articleId']);
+                if ($article) {
+                    $article->setThumbnail($request->get('crop')['newFilename']);
+                    return $this->redirectToRoute('form_article',['id' => $article->getId()]);
+                }
+            }
         }
 
-        return $this->redirectToRoute('form_article',['id' => $article->getId()]);
+        return $this->redirectToRoute('form_article');
     }
 
     /**

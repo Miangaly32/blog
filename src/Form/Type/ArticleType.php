@@ -24,18 +24,18 @@ class ArticleType extends AbstractType
     {
         
         $builder
-            ->add('title', TextType::class, ['label'  => 'Titre'])
-            ->add('articleDate', DateTimeType::class, ['label'  => 'Date','widget' => 'single_text'])
-            ->add('archived_at', DateTimeType::class, ['label'  => 'Date fin','widget' => 'single_text', 'required' => false])
+            ->add('title', TextType::class, ['label'  => 'Titre','attr' => ["onchange" => 'change_val(this)']])
+            ->add('articleDate', DateTimeType::class, ['label'  => 'Date','widget' => 'single_text','attr' => ["onchange" => 'change_val(this)']])
+            ->add('archived_at', DateTimeType::class, ['label'  => 'Date fin','widget' => 'single_text', 'required' => false,'attr' => ["onchange" => 'change_val(this)']])
             ->add('category', EntityType::class, ['label'  => 'Catégorie','class' => Category::class, 'choice_label' => 'name','query_builder' => function (CategoryRepository $er) {
                 return $er->createQueryBuilder('u')
                     ->where('u.status = 1');
             },
-            'data' => $options['data']->getCategory()])
-            ->add('content', CKEditorType::class, ['label'  => 'Contenu'])
-            ->add('extract', CKEditorType::class, ['label'  => 'Extrait'])
-            ->add('tags', TagType::class, ['label'  => 'Tags'])
-            ->add('save', SubmitType::class, ['label'  => 'Enregistrer'])
+            'data' => $options['data']->getCategory(),'attr' => ["onchange" => 'change_val(this)']])
+            ->add('content', CKEditorType::class, ['label'  => 'Contenu','attr' => ["onchange" => 'change_val(this)']])
+            ->add('extract', CKEditorType::class, ['label'  => 'Extrait','attr' => ["onchange" => 'change_val(this)']])
+            ->add('tags', TagType::class, ['label'  => 'Tags','attr' => ["onchange" => 'change_val(this)']])
+            ->add('save', SubmitType::class, ['label'  => 'Enregistrer','attr' => ["onclick" => 'submit_article()']])
         ;
     }
 

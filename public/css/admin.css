@@ -2,6 +2,7 @@ body{
     font-family: Roboto;
     background-color: #F7F5F5;
     color: #000000;
+    font-size: 14px;
 }
 
 /* Sidebar */
@@ -35,7 +36,17 @@ body{
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
 
-.list-group-item{
+.user-dropdown {
+    margin-left: 10px;
+    color: #000000;
+    font-size: 15px;
+}
+
+.breadcrumb {
+    font-size: 10px;
+}
+
+.list-group-item {
     color: white;
     background-color: #0061AE;
     border: 0;
@@ -45,7 +56,7 @@ body{
     color: #0061AE;
 }
 
-.open-button{
+.open-button {
     color: #6200EE;
     font-weight: 500;
     font-size: 14px;
@@ -53,22 +64,22 @@ body{
     letter-spacing: 1.25px;
 }
 
-.title{
+.title {
     font-weight: 500;
     font-size: 20px;
     line-height: 24px;
     letter-spacing: 0.15px;
 }
 
-.edit{
+.edit {
     color: #0061AE;
 }
 
-.blue-button{
+.blue-button {
     color: #0061AE;
 }
 
-.save-button{
+.save-button {
     background: #0061AE!important;
     border-radius: 4px;
     color: #FFFFFF;
@@ -77,7 +88,7 @@ body{
     font-size: 14px;
 }
 
-.add-button{
+.add-button {
     background: #0061AE!important;
     border-radius: 4px;
     color: #FFFFFF;
@@ -86,11 +97,11 @@ body{
     text-transform: capitalize;
 }
 
-.pointer{
+.pointer {
     cursor: pointer
 }
 
-.card-paragraph{
+.card-paragraph {
     height: 75px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -98,4 +109,27 @@ body{
 
 .bg-blue {
     background: #0061AE;
+}
+
+.upload {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    height: 46px;
+    width: 246px;
+    border: 1px dashed #B8B8B8;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.div-upload-icon {
+    background-color: #DEDCDC;
+    color: white;
+    width: 59px;
+    height: 46px;
+}
+
+.div-upload-text {
+    font-size: 10px;
+    width: 187px;
 }

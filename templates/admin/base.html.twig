@@ -27,7 +27,7 @@
   />
 
   <link rel="stylesheet" href="{{ asset('build/app.css') }}">
-  <link href="{{ asset('css/admin.css?v=6') }}" rel="stylesheet" type="text/css">
+  <link href="{{ asset('css/admin.css?v=0') }}" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{{ asset('css/bootstrap-tagsinput.css') }}">
 
 </head>
@@ -118,7 +118,7 @@
              id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
             <img src="{{ asset('img/profile.jpg')}}" class="rounded-circle" height="22"
                  alt="" loading="lazy" />
-            <span style="margin-left: 10px;color: #000000;">{{ app.user.name }}</span>
+            <span class="user-dropdown">{{ app.user.name }}</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
             <li>
