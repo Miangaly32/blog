@@ -9,28 +9,29 @@
 {% block content %}
     <div class="row ">
         <div class="col-9 bg-white">
-        <table class="table table-striped table-sm">
+        <table id="table" class="table table-striped table-sm">
             <thead>
             <tr>
                 <th>Classement</th>
                 <th>Catégories</th>
+                {% if is_granted('ROLE_ADMIN') %}
                 <th>Actions</th>
+                {% endif %}
             </tr>
             </thead>
             <tbody>
 
-            {% for category in categories %}
+            {% for key,category in categories %}
             <tr id="{{category.id}}">
-                <td>{{ category.id }}</td>
+                <td>{{ key+1 }}</td>
                 <td>{{ category.name }}</td>
+                {% if is_granted('ROLE_ADMIN') %}
                 <td>
-                    {% if is_granted('ROLE_ADMIN') %}
-                        <a style="cursor:pointer" id-category="{{category.id}}" class="deleteLink" url="{{ path('delete_category') }}" >
-                            <span class="material-icons-outlined edit" >delete_outline</span>
-                        </a>
-
-                    {% endif %}
+                    <a style="cursor:pointer" id-category="{{category.id}}" class="deleteLink" url="{{ path('delete_category') }}" >
+                        <span class="material-icons-outlined edit" >delete_outline</span>
+                    </a>
                 </td>
+                {% endif %}
             </tr>
                 {% endfor %}
 
@@ -58,7 +59,7 @@
           <p> Voulez-vous vraiment supprimer? Les articles associées seront également supprimées</p>
           <input type="hidden" id="url" value='' />
           <input type="hidden" id="id" value='' />
-          <button type="button" class="btn btn-link blue-button" data-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
           <button type="button" id="deleteBtn" class="btn btn-link blue-button">Supprimer</button>
       </div>
     </div>
@@ -95,6 +96,7 @@
                 }
             });
         });
+
     });
 </script>
 {% endblock %}

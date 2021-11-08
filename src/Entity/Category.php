@@ -13,6 +13,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
+ * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
  *     collectionOperations={"get"},
  *     itemOperations={"get"},
@@ -47,6 +48,21 @@ class Category
      * @Groups("category:read")
      */
     private $status;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $created_at;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $archived_at;
 
     public function __construct()
     {
@@ -109,6 +125,49 @@ class Category
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAt(): self
+    {
+        $this->created_at = new \DateTime();
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function setUpdatedAt(): self
+    {
+        $this->updated_at = new \DateTime();
+
+        return $this;
+    }
+
+    public function getArchivedAt(): ?\DateTimeInterface
+    {
+        return $this->archived_at;
+    }
+
+    public function setArchivedAt(?\DateTimeInterface $archived_at): self
+    {
+        $this->archived_at = $archived_at;
 
         return $this;
     }

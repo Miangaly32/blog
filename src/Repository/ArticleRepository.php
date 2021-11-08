@@ -48,14 +48,26 @@ class ArticleRepository extends ServiceEntityRepository
     }
     */
 
-    public function countArticles(): int
+    public function findActives()
     {
-        return $this->createQueryBuilder('a')
-            ->select('count(a.status)')
-            ->andWhere('a.status = :etat')
-            ->setParameter('etat', true)
-            ->getQuery()
-            ->getSingleScalarResult()
-            ;
+        $qb = $this->createQueryBuilder('a');
+        $qb
+            ->where('a.archived_at is null')
+            ->orWhere('a.archived_at > :now')
+            ->setParameter('now', new \DateTime());
+
+        return $qb->getQuery()
+            ->getResult();
+    }
+
+    public function findArchives()
+    {
+        $qb = $this->createQueryBuilder('a');
+        $qb->where('a.status = :status')
+            ->andwhere('a.archived_at is not null')
+            ->setParameter('status', false);
+
+        return $qb->getQuery()
+            ->getResult();
     }
 }

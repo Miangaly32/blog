@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Author;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -11,15 +12,17 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AuthorRepository;
 use App\Form\Type\AuthorType;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
+use Pagerfanta\Adapter\DoctrineORMAdapter;
 
 class AuthorController extends AbstractController
 {
     private AuthorRepository $authorRepository;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(AuthorRepository $authorRepository)
+    public function __construct(AuthorRepository $authorRepository,EntityManagerInterface $entityManager)
     {
         $this->authorRepository = $authorRepository;
+        $this->entityManager = $entityManager;
     }
 
     /* ADMIN */
@@ -44,70 +47,55 @@ class AuthorController extends AbstractController
                 '1234'
             ));
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($author);
-            $entityManager->flush();
+            $this->entityManager->persist($author);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('list_authors');
         }
 
         return $this->render('admin/author/list.html.twig', [
             'form' => $form->createView(),
-            'authors'=>$this->authorRepository ->findBy(['status'=>true])
+            'authors' => $this->authorRepository ->findBy(['status'=>true])
         ]);
     }
 
-
-      /**
-     * @Route("/admin/author/form/{id}", name="form_author")
-     * Ajout et modification categorie
-     * 
-     */
-    public function form(Request $request,$id = 0, UserPasswordHasherInterface $passwordHasher)
-    {
-        $titre = 'Modification';
-        $author = new Author();
-        $author -> setStatus(true) ;
-        $id != 0 ? $author = $this->authorRepository->find($id) : $titre = 'Ajout';
-        
-        $form = $this->createForm(AuthorType::class,$author);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $author = $form->getData();
-
-            $user = $author->getUser();
-            $user->setPassword($passwordHasher->hashPassword(
-                $user,
-                $user->getPassword()
-            ));
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($author);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('list_authors');
-        }
-
-        return $this->render('admin/author/form.html.twig', [
-            'form' => $form->createView(),
-            'titre' => $titre
-        ]);
-    }
-    
     /**
-     * @Route("/admin/author/delete/", name="delete_author")
+     * @Route("/admin/author/delete", name="delete_author")
      * Suppression auteur
      * 
      */
     public function delete(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $article = $this->authorRepository->find($request->request->get('id'));
-            $article->setStatus(false);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($article);
-            $entityManager->flush();
+            $author = $this->authorRepository->find($request->request->get('id'));
+
+            $articles = $author->getArticles();
+
+            foreach ($articles as $key => $article) {
+                $article->setAuthor(null);
+                $this->entityManager->persist($article);
+            }
+
+            $author->setStatus(false);
+            $this->entityManager->persist($author);
+            $this->entityManager->flush();
+            return new JsonResponse(['res' => 1]);
+        }
+        return new JsonResponse(['res' => 0]);
+    }
+
+    /**
+     * @Route("/admin/author/archive/delete", name="delete_archive_author")
+     * Suppression définitif auteur
+     *
+     */
+    public function deleteArchive(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $author = $this->authorRepository->find($request->request->get('id'));
+            $this->entityManager->remove($author);
+            $this->entityManager->flush();
+
             return new JsonResponse(['res' => 1]);
         }
 
@@ -122,9 +110,8 @@ class AuthorController extends AbstractController
     {
         $author = $this->authorRepository->find($id);
         $author->setStatus(true);
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($author);
-        $entityManager->flush();
+        $this->entityManager->persist($author);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('list_authors');
     }

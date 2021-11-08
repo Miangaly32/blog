@@ -15,22 +15,29 @@
             <table class="table table-striped table-sm">
                 <thead>
                   <tr>
+                      <th>Classement</th>
                       <th>Titre</th>
                       <th>Catégorie</th>
                       <th>Auteur</th>
+                      <th>Archivé le</th>
                       <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for article in articles %}
+                  {% for key,article in articles %}
                       <tr id="{{article.id}}">
+                          <td>{{ key+1 }}</td>
                           <td>{{ article.title }}</td>
                           <td>{{ article.category.name }}</td>
                           <td>{{ article.author.user.name }}</td>
+                          <td>{{ article.archivedat|date('d/m/Y h:i:s') }}</td>
                           <td>
-                               <a href="{{ path('restore_article', {id: article.id}) }}" >
+                               <a href="{{ path('restore_article', {id: article.id}) }}" title='Restaurer' >
                                   <span class="material-icons-outlined blue-button">unarchive</span>
                                </a>
+                              <a id-article="{{article.id}}" class="deleteLinkArticle pointer" title='Supprimer'  url="{{ path('delete_archive_article') }}">
+                                  <span class="material-icons-outlined text-danger">delete_forever</span>
+                              </a>
                           </td>
                       </tr>
                   {% endfor %}
@@ -45,17 +52,24 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
-                        <th>Nom</th>
+                        <th>Classement</th>
+                        <th>Catégorie</th>
+                        <th>Archivé le</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for category in categories %}
+                    {% for key,category in categories %}
                     <tr id="{{category.id}}">
+                        <td>{{ key+1 }}</td>
                         <td>{{ category.name }}</td>
+                        <td>{{ category.archivedat|date('d/m/Y h:i:s') }}</td>
                         <td>
-                            <a href="{{ path('restore_category', {id: category.id}) }}" >
+                            <a href="{{ path('restore_category', {id: category.id}) }}" title='Restaurer' >
                                 <span class="material-icons-outlined blue-button">unarchive</span>
+                            </a>
+                            <a id-category="{{category.id}}" class="deleteLinkCategory pointer" title='Supprimer' url="{{ path('delete_archive_category') }}">
+                                <span class="material-icons-outlined text-danger">delete_forever</span>
                             </a>
                         </td>
                     </tr>
@@ -71,17 +85,24 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
+                        <th>Classement</th>
                         <th>Nom</th>
+                        <th>Archivé le</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for author in authors %}
+                    {% for key,author in authors %}
                     <tr id="{{author.id}}">
+                        <td>{{ key+1 }}</td>
                         <td>{{ author.user.name }}</td>
+                        <td>{{ author.archivedat|date('d/m/Y h:i:s') }}</td>
                         <td>
-                            <a href="{{ path('restore_author', {id: author.id}) }}" >
+                            <a href="{{ path('restore_author', {id: author.id}) }}" title='Restaurer' >
                                 <span class="material-icons-outlined blue-button">unarchive</span>
+                            </a>
+                            <a id-author="{{author.id}}" class="deleteLinkAuthor pointer" title='Supprimer'  url="{{ path('delete_archive_author') }}">
+                                <span class="material-icons-outlined text-danger">delete_forever</span>
                             </a>
                         </td>
                     </tr>
@@ -90,4 +111,139 @@
             </table>
         </div>
     </div>
+{% endblock %}
+
+    {% block modal %}
+        <!-- Modal -->
+        <div class="modal fade" id="modalArticle" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <p> Etes-vous sûr de vouloir supprimer définitivement cet article?</p>
+                        <input type="hidden" id="url" value='' />
+                        <input type="hidden" id="id" value='' />
+                        <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
+                        <button type="button" id="deleteBtn" class="btn btn-link blue-button">
+                            Valider
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalCategory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <p> Etes-vous sûr de vouloir supprimer définitivement cette catégorie? Les articles de cette catégorie seront également supprimées. </p>
+                        <input type="hidden" id="urlCat" value='' />
+                        <input type="hidden" id="idCat" value='' />
+                        <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
+                        <button type="button" id="deleteBtnCat" class="btn btn-link blue-button">
+                            Valider
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalAuthor" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <p> Etes-vous sûr de vouloir supprimer définitivement cet auteur?</p>
+                        <input type="hidden" id="urlAuthor" value='' />
+                        <input type="hidden" id="idAuthor" value='' />
+                        <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
+                        <button type="button" id="deleteBtnAuthor" class="btn btn-link blue-button">
+                            Valider
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+{% block documentReady %}
+    <script>
+        $(document).ready(function() {
+            $('.deleteLinkArticle').click(function () {
+                $('#url').val($(this).attr('url'));
+                $('#id').val($(this).attr('id-article'));
+                $('#modalArticle').modal('show');
+            });
+
+            $('.deleteLinkCategory').click(function () {
+                $('#urlCat').val($(this).attr('url'));
+                $('#idCat').val($(this).attr('id-category'));
+                $('#modalCategory').modal('show');
+            });
+
+            $('.deleteLinkAuthor').click(function () {
+                $('#urlAuthor').val($(this).attr('url'));
+                $('#idAuthor').val($(this).attr('id-author'));
+                $('#modalAuthor').modal('show');
+            });
+
+            $('#deleteBtn').click(function (e) {
+                e.preventDefault();
+                let url = $('#url').val();
+                let id = $('#id').val();
+
+                $(this).prop("disabled", true);
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+                );
+
+                $.post(url, {id: id}, function (data) {
+                    $('#modalArticle').modal('toggle');
+                    if (data.res === 1) {
+                        $("#" + id).remove();
+                    } else {
+                        alert("Une erreur est survenue");
+                    }
+                });
+            });
+
+            $('#deleteBtnCat').click(function (e) {
+                e.preventDefault();
+                let url = $('#urlCat').val();
+                let id = $('#idCat').val();
+
+                $(this).prop("disabled", true);
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+                );
+
+                $.post(url, {id: id}, function (data) {
+                    $('#modalCategory').modal('toggle');
+                    if (data.res === 1) {
+                        $("#" + id).remove();
+                    } else {
+                        alert("Une erreur est survenue");
+                    }
+                });
+            });
+
+            $('#deleteBtnAuthor').click(function (e) {
+                e.preventDefault();
+                let url = $('#urlAuthor').val();
+                let id = $('#idAuthor').val();
+
+                $(this).prop("disabled", true);
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+                );
+
+                $.post(url, {id: id}, function (data) {
+                    $('#modalAuthor').modal('toggle');
+                    if (data.res === 1) {
+                        $("#" + id).remove();
+                    } else {
+                        alert("Une erreur est survenue");
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

@@ -38,7 +38,7 @@
                     {{ form_widget(form.email) }}
                 </div>
                 <div class="col-2">
-                    <span class="material-icons-outlined edit pointer" id="email-edit">
+                    <span class="material-icons-outlined edit pointer" id="email-edit" >
                     edit
                     </span>
                     {{ form_widget(form.save1, { 'attr': {'class': 'btn btn-primary save-button float-end','hidden':true} }) }}
@@ -104,12 +104,12 @@
             $('#user_save').attr('hidden', false);
         });
 
-        $("#user_name").focusout(function() {
-            $('#name-value').attr('hidden', false);
-            $('#name-input').attr('hidden', true);
-            $('#name-edit').attr('hidden', false);
-            $('#user_save').attr('hidden', true);
-        });
+        // $("#user_name").focusout(function() {
+        //     $('#name-value').attr('hidden', false);
+        //     $('#name-input').attr('hidden', true);
+        //     $('#name-edit').attr('hidden', false);
+        //     $('#user_save').attr('hidden', true);
+        // });
 
         $('#email-edit').click(function () {
             $('#email-value').attr('hidden', true);
@@ -119,12 +119,12 @@
             $('#user_save1').attr('hidden', false);
         });
 
-        $("#user_email").focusout(function() {
-            $('#email-value').attr('hidden', false);
-            $('#email-input').attr('hidden', true);
-            $('#email-edit').attr('hidden', false);
-            $('#user_save1').attr('hidden', true);
-        });
+        // $("#user_email").focusout(function() {
+        //     $('#email-value').attr('hidden', false);
+        //     $('#email-input').attr('hidden', true);
+        //     $('#email-edit').attr('hidden', false);
+        //     $('#user_save1').attr('hidden', true);
+        // });
 
         $('#password-edit').click(function () {
             $('#password-form').attr('hidden', false);

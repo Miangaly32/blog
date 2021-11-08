@@ -22,9 +22,9 @@
             </thead>
             <tbody>
            
-             {% for author in authors %}
+             {% for key,author in authors %}
                 <tr id="{{author.id}}">
-                    <td>{{ author.id }}</td>
+                    <td>{{ key+1 }}</td>
                     <td>{{ author.user.name }}</td>
                     <td>{{ author.user.email }}</td>
                     <td>
@@ -56,22 +56,14 @@
     {% block modal %}
 <!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Supprimer un auteur</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p> Voulez-vous vraiment supprimer? Les articles associées seront également supprimées</p>
-        <input type="hidden" id="url" value='' />
-        <input type="hidden" id="id" value='' />
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
-        <button type="button" id="deleteBtn" class="btn btn-danger">Supprimer</button>
+      <div class="modal-body text-center">
+            <p> Voulez-vous vraiment supprimer cet auteur?</p>
+            <input type="hidden" id="url" value='' />
+            <input type="hidden" id="id" value='' />
+            <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
+            <button type="button" id="deleteBtn" class="btn btn-link blue-button">Valider</button>
       </div>
     </div>
   </div>

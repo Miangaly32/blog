@@ -19,6 +19,10 @@
             {{ form.articleDate.vars.label }}
             {{ form_widget(form.articleDate,{'attr':{'class':'form-control-lg'}}) }}
         </div>
+        <div class="col-3">
+            {{ form.archived_at.vars.label }}
+            {{ form_widget(form.archived_at,{'attr':{'class':'form-control-lg'}}) }}
+        </div>
     </div>
     <div class="row mb-3">
         <div class="col-2">
@@ -26,10 +30,23 @@
             {{ form_widget(form.category,{'attr':{'class':'form-control-lg'}}) }}
         </div>
     </div>
+
     <div class="row mb-3">
         <div class="col-4">
-            {{ form.thumbnailFile.vars.label }}
-            {{ form_widget(form.thumbnailFile,{'attr':{'class':'form-control-lg'}}) }}
+            Image de la vignette <br />
+            {% if article.thumbnail %}
+                <div class="mt-1 mb-1">
+                    <img src="{{ asset("uploads/") ~ article.thumbnail }}" alt="{{ article.title }}">
+                </div>
+            {% endif %}
+            <div class="upload">
+                <div class="div-upload-icon">
+                    <span  style="line-height: unset;" class="material-icons-outlined">file_upload</span>
+                </div>
+                <div class="div-upload-text">
+                    <span >Télécharger une image</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -48,7 +65,7 @@
     </div>
 
     <div class="row mb-3">
-        <div class="col-3">
+        <div class="col-6">
             {{ form.tags.vars.label }}
             {{ form_widget(form.tags,{'attr':{'class':'form-control-lg','data-role':'tagsinput'}}) }}
         </div>
@@ -57,17 +74,89 @@
      <div class="row mb-3">
         <div class="col-9">
             {{ form_widget(form.save, { 'attr': {'class': 'btn btn-primary save-button float-end'} }) }}
+            {% if article.id and article.status==0%}
+                <a href="{{ path('publish', {id: article.id}) }}" class="btn btn-primary save-button float-end me-1"> Publier </a>
+            {% endif %}
         </div>
      </div>
     {{ form_end(form) }}
 {% endblock %}
+{% block modal %}
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    {{ form(formImage) }}
+                    <div class="form-img-crop"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{%  endblock %}
 {% block documentReady %}
     <script>
         $(document).ready(function() {
+            if(window.localStorage.getItem("article_title") !== null){
+                document.getElementById("article_title").value = window.localStorage.getItem("article_title");
+            }
+            if(window.localStorage.getItem("article_category") !== null){
+                document.getElementById("article_category").value = window.localStorage.getItem("article_category");
+            }
+            if(window.localStorage.getItem("article_archived_at") !== null){
+                document.getElementById("article_archived_at").value = window.localStorage.getItem("article_archived_at");
+            }
+
+            CKEDITOR.instances.article_content.on('blur', function() {
+                CKEDITOR.instances.article_extract.setData(CKEDITOR.instances.article_content.getData());
+            });
+
             $('.custom-file-input').on('change', function (event) {
                 let inputFile = event.currentTarget;
                 $(inputFile).parent().find('.custom-file-label').html(inputFile.files[0].name);
             });
+
+            $('.bootstrap-tagsinput input').on('keypress', function(e){
+                if (e.keyCode === 13){
+                    e.preventDefault();
+                }
+            });
+
+            $('.upload').click(function () {
+                $('#modal').modal('show');
+            });
+
+            $("#form_thumbnail").change(function(event){
+                const input = event.target;
+                const file = input.files[0];
+                const article_id = "{{ article.id }}";
+                const data = new FormData();
+                data.append('file', file, file.name);
+                data.append('article_id', article_id);
+
+                $('.form-img-crop').html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+                );
+
+                $.ajax({
+                    url: "{{ path('uploadFile') }}",
+                    type: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    cache: false
+                }).done(function( data ) {
+                    $('.form-img-crop').html(data);
+                });
+            });
+
         });
+
+        function change_val(input){
+            window.localStorage.setItem(input.id, input.value);
+        }
+
+        function submit_article(){
+            window.localStorage.clear();
+        }
     </script>
 {% endblock %}

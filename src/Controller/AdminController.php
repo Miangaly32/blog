@@ -27,9 +27,10 @@ class AdminController extends AbstractController
     public function index()
     {
         return $this->render('admin/base.html.twig', [
-            'nbArticles' => $this->articleRepository->countArticles(),
-            'nbCategories' => $this->categoryRepository->countCategories(),
-            'nbAuthors' => $this->authorRepository->countAuthors()
+            'articles' => $this->articleRepository->findBy(['status'=>true],['articleDate'=>'desc'],5),
+            'categories' => $this->categoryRepository->findBy(['status'=>true]),
+            'authors' => $this->authorRepository->findBy(['status'=>true]),
+            'archives' => $this->articleRepository->findArchives(),
         ]);
     }
 
@@ -41,7 +42,7 @@ class AdminController extends AbstractController
     public function listArchive(ArticleRepository $articleRepository,CategoryRepository $categoryRepository,AuthorRepository $authorRepository)
     {
         return $this->render('admin/archive.html.twig', [
-            'articles' => $this->articleRepository->findBy(['status'=>false]),
+            'articles' => $this->articleRepository->findArchives(),
             'categories' => $this->categoryRepository->findBy(['status'=>false]),
             'authors' => $this->authorRepository->findBy(['status'=>false])
         ]);
