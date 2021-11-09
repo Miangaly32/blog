@@ -1,4 +1,4 @@
-{% extends '/admin/base.html.twig' %}
+{% extends '/admin/article/list.html.twig' %}
 
 {% block breadcumbs %}
     <ol class="breadcrumb">
@@ -8,6 +8,7 @@
 {% endblock %}
 {% block content %}
     <div class="row ">
+        <h5>Liste des catégories</h5>
         <div class="col-9 bg-white">
         <table id="table" class="table table-striped table-sm">
             <thead>
@@ -27,7 +28,7 @@
                 <td>{{ category.name }}</td>
                 {% if is_granted('ROLE_ADMIN') %}
                 <td>
-                    <a style="cursor:pointer" id-category="{{category.id}}" class="deleteLink" url="{{ path('delete_category') }}" >
+                    <a style="cursor:pointer" data-id="{{category.id}}" class="deleteLink" data-url="{{ path('delete_category') }}" >
                         <span class="material-icons-outlined edit" >delete_outline</span>
                     </a>
                 </td>
@@ -50,53 +51,4 @@
         </div>
     </div>
 {% endblock %}
-    {% block modal %}
-<!-- Modal -->
-<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-          <p> Voulez-vous vraiment supprimer? Les articles associées seront également supprimées</p>
-          <input type="hidden" id="url" value='' />
-          <input type="hidden" id="id" value='' />
-          <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
-          <button type="button" id="deleteBtn" class="btn btn-link blue-button">Supprimer</button>
-      </div>
-    </div>
-  </div>
-</div>
-{% endblock %}
-
-    {% block documentReady %}
-
-<script>
-    $(document).ready(function(){
-        $('.deleteLink').click(function () {
-            $('#url').val($(this).attr('url'));
-            $('#id').val($(this).attr('id-category'));
-            $('#modal').modal('show');
-        });
-
-        $('#deleteBtn').click(function (e) {
-            e.preventDefault();
-            let url = $('#url').val();
-            let id = $('#id').val();
-
-            $(this).prop("disabled", true);
-            $(this).html(
-                `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
-            );
-
-            $.post(url,{id:id},function(data){
-                $('#modal').modal('toggle');
-                if(data.res===1){
-                    $("#"+id).remove();
-                }else{
-                  alert("Une erreur est survenue");
-                }
-            });
-        });
-
-    });
-</script>
-{% endblock %}
+{% block msgDelete %} Voulez-vous vraiment supprimer? Les articles associées seront également supprimées {% endblock %}

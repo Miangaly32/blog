@@ -48,4 +48,11 @@ class CategoryRepository extends ServiceEntityRepository
     }
     */
 
+    public function findByIds($ids)
+    {
+        $query = $this->getEntityManager()->createQuery('SELECT c FROM App\Entity\Category c WHERE c.id in ('. implode(',', $ids).')');
+
+        return $query->getResult();
+    }
+
 }

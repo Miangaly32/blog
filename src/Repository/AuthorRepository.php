@@ -47,4 +47,11 @@ class AuthorRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findByIds($ids)
+    {
+        $query = $this->getEntityManager()->createQuery('SELECT a FROM App\Entity\Author a WHERE a.id in ('. implode(',', $ids).')');
+
+        return $query->getResult();
+    }
 }

@@ -61,15 +61,19 @@ class CategoryController extends AbstractController
     {    
         if ($request->isXmlHttpRequest()) {
             $category = $this->categoryRepository->find($request->request->get('id'));
-            $articles = $category->getArticles();
 
-            foreach ($articles as $key => $article) {
-                $article -> setStatus(false);
-                $this->entityManager->persist($article);
+            if ($category) {
+                $articles = $category->getArticles();
+
+                foreach ($articles as $key => $article) {
+                    $article -> setStatus(false);
+                    $this->entityManager->persist($article);
+                }
+
+                $category -> setStatus(false);
+                $this->entityManager->flush();
             }
-    
-            $category -> setStatus(false);
-            $this->entityManager->flush();
+
             return new JsonResponse(['res' => 1]);
         }
 
@@ -85,14 +89,46 @@ class CategoryController extends AbstractController
     {
         if ($request->isXmlHttpRequest()) {
             $category = $this->categoryRepository->find($request->request->get('id'));
-            $articles = $category->getArticles();
 
-            foreach ($articles as $key => $article) {
-                $this->entityManager->remove($article);
+            if ($category) {
+                $articles = $category->getArticles();
+
+                foreach ($articles as $key => $article) {
+                    $this->entityManager->remove($article);
+                }
+
+                $this->entityManager->remove($category);
+                $this->entityManager->flush();
             }
 
-            $this->entityManager->remove($category);
+            return new JsonResponse(['res' => 1]);
+        }
+
+        return new JsonResponse(['res' => 0]);
+    }
+
+    /**
+     * @Route("/admin/category/archive/delete/multiple", name="delete_multiple_archive_category")
+     * Suppression multiple définitive categorie
+     *
+     */
+    public function deleteMultipleArchive(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $categories = $this->categoryRepository->findByIds($request->request->get('ids'));
+
+            foreach ($categories as $category) {
+                $articles = $category->getArticles();
+
+                foreach ($articles as $key => $article) {
+                    $this->entityManager->remove($article);
+                }
+
+                $this->entityManager->remove($category);
+
+            }
             $this->entityManager->flush();
+
             return new JsonResponse(['res' => 1]);
         }
 
@@ -106,9 +142,12 @@ class CategoryController extends AbstractController
     public function restore(int $id)
     {
         $category = $this->categoryRepository->find($id);
-        $category->setStatus(true);
-        $this->entityManager->persist($category);
-        $this->entityManager->flush();
+
+        if ($category) {
+            $category->setStatus(true);
+            $this->entityManager->persist($category);
+            $this->entityManager->flush();
+        }
 
         return $this->redirectToRoute('list_categories');
     }
