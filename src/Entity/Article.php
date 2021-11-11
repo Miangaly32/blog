@@ -14,14 +14,18 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use App\Dto\ArticleOutput;
 
 /**
  * @ORM\Entity(repositoryClass=ArticleRepository::class)
  * @ORM\HasLifecycleCallbacks()
  * @ApiResource(
- *     collectionOperations={"get"},
+ *     collectionOperations={
+ *          "get"
+ *      },
  *     itemOperations={"get"},
- *     normalizationContext={"groups"={"article:read"}}
+ *     normalizationContext={"groups"={"article:read"}},
+ *     output= ArticleOutput::class
  * )
  * @ApiFilter(BooleanFilter::class,properties={"status"})
  */
@@ -63,7 +67,7 @@ class Article
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="articles")
      * @ORM\JoinColumn(nullable=true)
-     * @Groups("article:read")
+     * @Groups({"article:read"})
      */
     private $category;
 
@@ -113,11 +117,13 @@ class Article
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("article:read")
      */
     private $image_description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("article:read")
      */
     private $image_metadata;
 
@@ -351,5 +357,4 @@ class Article
 
         return $this;
     }
-
 }
