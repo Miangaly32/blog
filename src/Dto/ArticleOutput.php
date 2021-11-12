@@ -7,17 +7,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 final class ArticleOutput
 {
     /**
-     * @Groups({"article:read"})
+     * @Groups({"article:read","category:read"})
      */
     public $title;
 
     /**
-     * @Groups({"article:read"})
+     * @Groups({"article:read","category:read"})
      */
     public $author;
 
     /**
-     * @Groups("article:read")
+     * @Groups({"article:read","category:read"})
      */
     public $articleDate;
 
@@ -27,17 +27,17 @@ final class ArticleOutput
     public $category;
 
     /**
-     * @Groups({"article:read"})
+     * @Groups({"article:read","category:read"})
      */
     public $content;
 
     /**
-     * @Groups({"article:read"})
+     * @Groups({"article:read","category:read"})
      */
     public $extract;
 
     /**
-     * @Groups("article:read")
+     * @Groups({"article:read","category:read"})
      */
     public $thumbnail;
 
@@ -47,10 +47,18 @@ final class ArticleOutput
     public $tags;
 
     /**
+     * @Groups("article:read")
+     */
+    public $featured;
+
+
+    /**
+     * @Groups("article:read")
      */
     public $image_description;
 
     /**
+     * @Groups("article:read")
      */
     public $image_metadata;
 

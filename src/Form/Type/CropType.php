@@ -25,7 +25,7 @@ class CropType extends AbstractType
             ])
             ->add('image_description', TextType::class, ['label'  => 'Image description'])
             ->add('image_metadata', TextType::class, ['label'  => 'Image metadata'])
-            ->add('save',SubmitType::class)
+            ->add('save',SubmitType::class,['attr' => ['class' => "btn btn-primary save-button float-end"]])
             ->getForm()
         ;
     }

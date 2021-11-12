@@ -199,28 +199,29 @@ class BlogController extends AbstractController
      * @Route("/admin/article/cropImage", name="cropImage")
      * cropImage
      */
-    public function cropImage(Request $request)
+    public function cropImage(Request $request, SluggerInterface $slugger)
     {
         $filename = $this->getParameter('kernel.project_dir').'/public/temp/'.$request->get('crop')['newFilename'];
         $imageManager = new ImageManager();
         $crop = new Crop($imageManager,$filename);
         $crop->setOptions( $request->get('crop')['crop']['options']);
-        $image = Image::make($crop->getCroppedThumbnail(200,150));
+        $image = Image::make($crop->getCroppedThumbnail(350,300));
+        $imageFull = Image::make($filename);
 
-        if ($image) {
-            $image->save($this->getParameter('kernel.project_dir')."/public/uploads/".$request->get('crop')['newFilename']);
+        $image->save($this->getParameter('kernel.project_dir')."/public/uploads/".$request->get('crop')['newFilename']);
+        $imageFull->save($this->getParameter('kernel.project_dir')."/public/uploads/full/".$request->get('crop')['newFilename']);
 
-            $session = new Session();
-            $session->set('imageCropped', $request->get('crop')['newFilename']);
-            $session->set('imageMetadata', $request->get('crop')['image_metadata']);
-            $session->set('imageDescription', $request->get('crop')['image_description']);
+        $session = new Session();
+        $session->set('imageCropped', $request->get('crop')['newFilename']);
+        $session->set('imageMetadata', $request->get('crop')['image_metadata']);
+        $session->set('imageDescription', $request->get('crop')['image_description']);
+        $session->set('imageDescription', $request->get('crop')['image_description']);
 
-            if ($request->get('crop')['articleId']) {
-                $article = $this->articleRepository->find($request->get('crop')['articleId']);
-                if ($article) {
-                    $article->setThumbnail($request->get('crop')['newFilename']);
-                    return $this->redirectToRoute('form_article',['id' => $article->getId()]);
-                }
+        if ($request->get('crop')['articleId']) {
+            $article = $this->articleRepository->find($request->get('crop')['articleId']);
+            if ($article) {
+                $article->setThumbnail($request->get('crop')['newFilename']);
+                return $this->redirectToRoute('form_article',['id' => $article->getId()]);
             }
         }
 

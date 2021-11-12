@@ -22,6 +22,7 @@ class ArticleOutputDataTransformer implements DataTransformerInterface
         $output->content = $object->getContent();
         $output->extract = $object->getExtract();
         $output->tags = $object->getTags();
+        $output->featured = $object->getFeatured();
         $output->thumbnail = $object->getThumbnail();
         $output->image_description = $object->getImageDescription();
         $output->image_metadata = $object->getImageMetadata();
