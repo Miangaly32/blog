@@ -71,7 +71,14 @@
         </div>
     </div>
 
-     <div class="row mb-3">
+    <div class="row mb-3">
+        <div class="col-9">
+            {{ form_widget(form.featured) }}
+        </div>
+    </div>
+
+
+    <div class="row mb-3">
         <div class="col-9">
             {{ form_widget(form.save, { 'attr': {'class': 'btn btn-primary save-button float-end'} }) }}
             {% if article.id and article.status==0%}

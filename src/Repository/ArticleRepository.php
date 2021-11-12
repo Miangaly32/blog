@@ -54,7 +54,8 @@ class ArticleRepository extends ServiceEntityRepository
         $qb
             ->where('a.archived_at is null')
             ->orWhere('a.archived_at > :now')
-            ->setParameter('now', new \DateTime('now',new \DateTimeZone('Europe/Paris')));
+            ->setParameter('now', new \DateTime('now',new \DateTimeZone('Europe/Paris')))
+            ->orderBy('a.articleDate', 'desc');
 
         return $qb->getQuery()
             ->getResult();
@@ -73,6 +74,7 @@ class ArticleRepository extends ServiceEntityRepository
         $qb->where('a.status = :status')
             ->andwhere('a.archived_at is not null')
             ->setParameter('status', false);
+
 
         return $qb->getQuery()
             ->getResult();

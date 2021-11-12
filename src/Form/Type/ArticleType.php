@@ -5,6 +5,7 @@ use App\Entity\Article;
 use App\Entity\Tag;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -35,6 +36,7 @@ class ArticleType extends AbstractType
             ->add('content', CKEditorType::class, ['label'  => 'Contenu','attr' => ["onchange" => 'change_val(this)']])
             ->add('extract', CKEditorType::class, ['label'  => 'Extrait','attr' => ["onchange" => 'change_val(this)']])
             ->add('tags', TagType::class, ['label'  => 'Tags','attr' => ["onchange" => 'change_val(this)']])
+            ->add('featured', CheckboxType::class, ['label'  => 'Mettre à la une','attr' => ["onchange" => 'change_val(this)']])
             ->add('save', SubmitType::class, ['label'  => 'Enregistrer','attr' => ["onclick" => 'submit_article()']])
         ;
     }
