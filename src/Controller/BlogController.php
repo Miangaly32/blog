@@ -250,6 +250,31 @@ class BlogController extends AbstractController
     }
 
     /**
+     * @Route("/admin/article/delete/multiple", name="delete_multiple_article")
+     * Suppression multiple article
+     */
+    public function deleteMultiple(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $ids = $request->request->get('ids');
+            $articles = $this->articleRepository->findByIds($ids);
+
+            foreach ($articles as $article) {
+                $article->setArchivedAt(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
+                $article->setStatus(false);
+                $this->entityManager->persist($article);
+            }
+
+            $this->entityManager->flush();
+
+            return new JsonResponse(['res' => 1]);
+
+        }
+
+        return new JsonResponse(['res' => 0]);
+    }
+
+    /**
      * @Route("/admin/article/archive/delete", name="delete_archive_article")
      * Suppression définitif d'article
      */
@@ -269,6 +294,27 @@ class BlogController extends AbstractController
         return new JsonResponse(['res' => 0]);
     }
 
+    /**
+     * @Route("/admin/article/archive/delete/multiple", name="delete_multiple_archive_article")
+     * Suppression multiple définitif d'article
+     */
+    public function deleteMultipleArchive(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $articles = $this->articleRepository->findByIds($request->request->get('ids'));
+
+            foreach ($articles as $article) {
+                $this->entityManager->remove($article);
+            }
+
+            $this->entityManager->flush();
+
+            return new JsonResponse(['res' => 1]);
+        }
+
+        return new JsonResponse(['res' => 0]);
+    }
+
 
     /**
      * @Route("/admin/article/restore/{id}", name="restore_article")
@@ -280,6 +326,7 @@ class BlogController extends AbstractController
 
         if ($article) {
             $article->setStatus(true);
+            $article->setArchivedAt(null);
 
             $category = $article->getCategory();
             if ($category) {

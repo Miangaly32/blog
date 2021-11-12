@@ -2,29 +2,54 @@
 
 {% block breadcumbs %}
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ path('admin') }}">Article</a></li>
+        <li class="breadcrumb-item"><a href="#">Article</a></li>
         <li class="breadcrumb-item active" aria-current="page">Liste</li>
     </ol>
 {% endblock %}
 {% block content %}
-    <div class="mb-2">
-        <a class="btn btn-primary add-button" href="{{ path('form_article') }}">
-            <i class="fa fa-plus me-2" aria-hidden="true"></i>Ajouter
-        </a>
-        <a class="btn btn-primary add-button" href="{{ path('list_article_tab') }}">
-            Version tableau
-        </a>
+    <div class="mb-2 d-flex">
+        <div style="width:20%" class="d-flex align-items-center">
+            <div class="form-check form-check-inline" >
+                <input class="form-check-input"
+                       type="checkbox"
+                       id="check-all">
+                <label class="form-check-label" for="check-all">
+                    Sélectionner tout
+                </label>
+            </div>
+            <a style=" cursor: pointer" id="deleteAll"  data-url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit " style="font-size: 38px" >delete_outline</span></a>
+        </div>
+
+        <div style="width:80%">
+            <a class="btn btn-primary add-button" href="{{ path('form_article') }}">
+                <i class="fa fa-plus me-2" aria-hidden="true"></i>Ajouter
+            </a>
+            <a class="btn btn-primary add-button" href="{{ path('list_article_tab') }}">
+                Version tableau
+            </a>
+        </div>
     </div>
      <div class="row align-items-center justify-content-start">
         {% for article in articles %}
             <div id="{{ article.id }}" class="card m-2" style="width:30%;height: 500px" >
                 <div class="card-body">
-                    <h5 class="card-title">{{ article.title }}</h5>
-                    {% if article.author %}
-                    <span style="font-size:13px">{{ article.author.user.name }}</span>
-                    {% else %}
-                        <span style="font-size:13px">Non renseigné</span>
-                    {% endif %}
+                    <div class="d-flex">
+                        <div class="d-flex justify-content-center align-items-center" style="width:10%;align-items: center;">
+                            <input class="form-check-input row-checkbox"
+                                   type="checkbox"
+                                   value="{{ article.id }}"
+                                   aria-label="...">
+                        </div>
+                         <div style="width:90%">
+                             <h5 class="card-title">{{ article.title }}</h5>
+                             {% if article.author %}
+                                 <span style="font-size:13px">{{ article.author.user.name }}</span>
+                             {% else %}
+                                 <span style="font-size:13px">Non renseigné</span>
+                             {% endif %}
+                         </div>
+                    </div>
+
                     {% if article.thumbnail %}
                         <img class="img-fluid" style="width:100%;" src="{{asset('uploads/')~ article.thumbnail}}" alt="{{ article.title }}" />
                     {% else %}
@@ -36,7 +61,7 @@
                     <div class=fixed-bottom">
                     <a href="{{ path('detail_article', {id: article.id}) }}" class="edit">Voir plus</a>
                     {% if is_granted('ROLE_ADMIN') or article.author.user == app.user %}
-                        <a style=" cursor: pointer" data-id-article="{{article.id}}" class="deleteLink"  data-url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit float-end" id="password-edit" >delete_outline</span></a>
+                        <a style=" cursor: pointer" data-id="{{article.id}}" class="deleteLink"  data-url="{{ path('delete_article') }}" ><span class="material-icons-outlined edit float-end" id="password-edit" >delete_outline</span></a>
                         <a href="{{ path('form_article', {id: article.id}) }}"><span class="material-icons-outlined edit float-end" id="password-edit" >edit</span></a>
                     {% endif %}
                     </div>
@@ -51,7 +76,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-body text-center">
-          <p> Etes-vous sûr de vouloir supprimer cet article?</p>
+          <p> {% block msgDelete %} Etes-vous sûr de vouloir supprimer cet article? {% endblock %}</p>
           <input type="hidden" id="url" value='' />
           <input type="hidden" id="id" value='' />
           <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
@@ -62,6 +87,21 @@
     </div>
   </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalAll" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <p> {% block msgDeleteMultiple %} Etes-vous sûr de vouloir supprimer ces articles? {% endblock %}</p>
+                <button type="button" class="btn btn-link blue-button" data-mdb-dismiss="modal">Annuler</button>
+                <button type="button" id="deleteAllBtn" class="btn btn-link blue-button">
+                    Valider
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
     {% endblock %}
 
 {% block documentReady %}
@@ -69,7 +109,7 @@
         $(document).ready(function() {
             $('.deleteLink').click(function () {
                 $('#url').val($(this).attr('data-url'));
-                $('#id').val($(this).attr('data-id-article'));
+                $('#id').val($(this).attr('data-id'));
                 $('#modal').modal('show');
             });
 
@@ -85,8 +125,53 @@
 
                 $.post(url, {id: id}, function (data) {
                     $('#modal').modal('toggle');
+                    $('#deleteBtn').prop("disabled", false);
+                    $('#deleteBtn').html('VALIDER');
                     if (data.res === 1) {
                         $("#" + id).remove();
+                    } else {
+                        alert("Une erreur est survenue");
+                    }
+                });
+            });
+
+            $('#check-all').change(function() {
+                if(this.checked) {
+                    $('input[type=checkbox]').each(function () {
+                        this.checked = true;
+                    });
+                } else {
+                    $('input[type=checkbox]').each(function () {
+                        this.checked = false;
+                    });
+                }
+            });
+
+            $('#deleteAll').click(function() {
+                $('#modalAll').modal('show');
+            });
+
+            $('#deleteAllBtn').click(function (e) {
+                e.preventDefault();
+
+                let ids = [];
+                $('.row-checkbox:checkbox:checked').each(function () {
+                    ids.push(this.value);
+                });
+
+                $(this).prop("disabled", true);
+                $(this).html(
+                    `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> En cours...`
+                );
+
+                $.post("{{ path('delete_multiple_article') }}", {ids: ids}, function (data) {
+                    $('#modalAll').modal('toggle');
+                    $('#deleteAllBtn').prop("disabled", false);
+                    $('#deleteAllBtn').html('VALIDER');
+                    if (data.res === 1) {
+                        ids.forEach(function (id){
+                            $("#" + id).remove();
+                        })
                     } else {
                         alert("Une erreur est survenue");
                     }

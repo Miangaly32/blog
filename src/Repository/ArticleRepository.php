@@ -54,10 +54,17 @@ class ArticleRepository extends ServiceEntityRepository
         $qb
             ->where('a.archived_at is null')
             ->orWhere('a.archived_at > :now')
-            ->setParameter('now', new \DateTime());
+            ->setParameter('now', new \DateTime('now',new \DateTimeZone('Europe/Paris')));
 
         return $qb->getQuery()
             ->getResult();
+    }
+
+    public function findByIds($ids)
+    {
+        $query = $this->getEntityManager()->createQuery('SELECT a FROM App\Entity\Article a WHERE a.id in ('. implode(',', $ids).')');
+
+        return $query->getResult();
     }
 
     public function findArchives()

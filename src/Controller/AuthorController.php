@@ -12,7 +12,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\AuthorRepository;
 use App\Form\Type\AuthorType;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Pagerfanta\Adapter\DoctrineORMAdapter;
 
 class AuthorController extends AbstractController
 {
@@ -69,17 +68,20 @@ class AuthorController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $author = $this->authorRepository->find($request->request->get('id'));
 
-            $articles = $author->getArticles();
+            if ($author) {
+                $articles = $author->getArticles();
 
-            foreach ($articles as $key => $article) {
-                $article->setAuthor(null);
-                $this->entityManager->persist($article);
+                foreach ($articles as $key => $article) {
+                    $article->setAuthor(null);
+                    $this->entityManager->persist($article);
+                }
+
+                $author->setStatus(false);
+                $this->entityManager->persist($author);
+                $this->entityManager->flush();
+
+                return new JsonResponse(['res' => 1]);
             }
-
-            $author->setStatus(false);
-            $this->entityManager->persist($author);
-            $this->entityManager->flush();
-            return new JsonResponse(['res' => 1]);
         }
         return new JsonResponse(['res' => 0]);
     }
@@ -103,15 +105,38 @@ class AuthorController extends AbstractController
     }
 
     /**
+     * @Route("/admin/author/archive/delete/multiple", name="delete_multiple_archive_author")
+     * Suppression multiple définitif auteur
+     *
+     */
+    public function deleteMultipleArchive(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+            $authors = $this->authorRepository->findByIds($request->request->get('ids'));
+
+            foreach ($authors as $author) {
+                $this->entityManager->remove($author);
+            }
+            $this->entityManager->flush();
+
+            return new JsonResponse(['res' => 1]);
+        }
+
+        return new JsonResponse(['res' => 0]);
+    }
+
+    /**
      * @Route("/admin/author/restore/{id}", name="restore_author")
      * Restaurer auteur
      */
     public function restore(int $id)
     {
         $author = $this->authorRepository->find($id);
-        $author->setStatus(true);
-        $this->entityManager->persist($author);
-        $this->entityManager->flush();
+        if ($author) {
+            $author->setStatus(true);
+            $this->entityManager->persist($author);
+            $this->entityManager->flush();
+        }
 
         return $this->redirectToRoute('list_authors');
     }
